@@ -1,0 +1,51 @@
+{
+ "apiVersion": "134",
+ "getRadioStats": {
+  "radioStats": [
+   {
+    "band": "RF_2GHZ",
+    "rxStats": {
+     "bytes": "25769",
+     "packets": "444",
+     "frameErrors": "355"
+    },
+    "txStats": {
+     "bytes": "20195",
+     "packets": "82"
+    },
+    "thermalStatus": {
+     "temp2": 43,
+     "dutyCycle": 100
+    },
+    "antennaStatus": {
+     "rssi1": -50,
+     "rssi2": -62,
+     "rssi3": -54,
+     "rssi4": "NaN"
+    }
+   },
+   {
+    "band": "RF_5GHZ",
+    "rxStats": {
+     "bytes": "20184522",
+     "packets": "61083",
+     "frameErrors": "1306"
+    },
+    "txStats": {
+     "bytes": "303789743",
+     "packets": "241928"
+    },
+    "thermalStatus": {
+     "temp2": 42,
+     "dutyCycle": 100
+    },
+    "antennaStatus": {
+     "rssi1": -54,
+     "rssi2": -49,
+     "rssi3": -51,
+     "rssi4": "NaN"
+    }
+   }
+  ]
+ }
+}

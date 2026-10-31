@@ -1,0 +1,33 @@
+{
+ "apiVersion": "134",
+ "getDeviceInfo": {
+  "deviceInfo": {
+   "id": "Router-DEMO0000000000000001",
+   "hardwareVersion": "v2",
+   "softwareVersion": "2026.10.18.mr88737",
+   "countryCode": "US",
+   "softwarePartitionsEqual": true,
+   "bootcount": 590,
+   "antiRollbackVersion": 1,
+   "manufacturedVersion": "2023.19.0.mr23980",
+   "hardwareIndex": "ROUTER_GEN_2",
+   "inactiveAntiRollbackVersion": 1,
+   "boot": {
+    "countByReason": {
+     "0": 12,
+     "1": 404,
+     "2": 152,
+     "3": 2,
+     "4": 19,
+     "5": 1
+    },
+    "lastReason": "POWER_CYCLE",
+    "lastCount": 590,
+    "evenSideSoftwareVersion": "2026.10.18.mr88737",
+    "oddSideSoftwareVersion": "2026.10.18.mr88737",
+    "apiVersionOddSide": 134,
+    "apiVersionEvenSide": 134
+   }
+  }
+ }
+}

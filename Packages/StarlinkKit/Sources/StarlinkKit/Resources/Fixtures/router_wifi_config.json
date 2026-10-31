@@ -1,0 +1,66 @@
+{
+ "apiVersion": "134",
+ "wifiGetConfig": {
+  "wifiConfig": {
+   "countryCode": "US",
+   "setupComplete": true,
+   "macWan": "74:5a:11:00:00:01",
+   "macLan": "74:5a:11:00:00:02",
+   "bootCount": 590,
+   "incarnation": "7036795513211264990",
+   "wanHostDscpMark": 1,
+   "networks": [
+    {
+     "ipv4": "192.168.1.1/24",
+     "basicServiceSets": [
+      {
+       "bssid": "ba:5a:11:00:00:03",
+       "ssid": "Perigee_Demo",
+       "band": "RF_2GHZ",
+       "ifaceName": "ra0",
+       "authWpa2Wpa3": {
+        "password": "demo-password-123"
+       }
+      },
+      {
+       "bssid": "ba:5a:11:00:00:04",
+       "ssid": "Perigee_Demo",
+       "band": "RF_5GHZ",
+       "ifaceName": "rax0",
+       "authWpa2Wpa3": {
+        "password": "demo-password-123"
+       }
+      }
+     ],
+     "domain": "lan",
+     "dhcpv4Start": 20,
+     "vlan": 100,
+     "dhcpv4LeaseDurationS": 3600,
+     "dhcpv4End": 254
+    }
+   ],
+   "boot": {
+    "countByReason": {
+     "0": 12,
+     "1": 404,
+     "2": 152,
+     "3": 2,
+     "4": 19,
+     "5": 1
+    },
+    "lastReason": "POWER_CYCLE",
+    "lastCount": 590,
+    "evenSideSoftwareVersion": "2026.10.18.mr88737",
+    "oddSideSoftwareVersion": "2026.10.18.mr88737",
+    "apiVersionOddSide": 134,
+    "apiVersionEvenSide": 134
+   },
+   "wanAckSuppression": {
+    "htbAckQueueRate": 2,
+    "htbAckQueueCeil": 2.5,
+    "cakeQueueBandwidth": 1.75,
+    "cakeAckFilterAggressive": true
+   }
+  }
+ }
+}

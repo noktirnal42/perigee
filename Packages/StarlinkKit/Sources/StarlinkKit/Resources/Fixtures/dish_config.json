@@ -1,0 +1,19 @@
+{
+ "apiVersion": "43",
+ "dishGetConfig": {
+  "dishConfig": {
+   "snowMeltMode": "ALWAYS_OFF",
+   "locationRequestMode": "LOCAL",
+   "swupdateRebootHour": 3,
+   "applySnowMeltMode": true,
+   "applyLocationRequestMode": true,
+   "applyLevelDishMode": true,
+   "applyPowerSaveStartMinutes": true,
+   "applyPowerSaveDurationMinutes": true,
+   "applyPowerSaveMode": true,
+   "applySwupdateThreeDayDeferralEnabled": true,
+   "applyAssetClass": true,
+   "applySwupdateRebootHour": true
+  }
+ }
+}
