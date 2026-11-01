@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 420" width="1280" height="420" role="img" aria-label="Perigee">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05070a"/><stop offset=".62" stop-color="#1a0b0c"/><stop offset="1" stop-color="#3a140c"/></linearGradient>
+    <radialGradient id="glow" cx=".82" cy=".95" r=".7"><stop offset="0" stop-color="#ff6b3d" stop-opacity=".55"/><stop offset="1" stop-color="#ff6b3d" stop-opacity="0"/></radialGradient>
+    <linearGradient id="t1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a5c"/><stop offset="1" stop-color="#a8381d"/></linearGradient>
+    <linearGradient id="t2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2562e"/><stop offset="1" stop-color="#6e1f12"/></linearGradient>
+    <linearGradient id="t3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7d2514"/><stop offset="1" stop-color="#c9482a"/></linearGradient>
+    <radialGradient id="sat"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#cfe9ff" stop-opacity=".8"/><stop offset="1" stop-color="#9fd2ff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="orbit" x1="0" x2="1"><stop offset="0" stop-color="#dbf2ff" stop-opacity=".05"/><stop offset=".5" stop-color="#dbf2ff" stop-opacity=".9"/><stop offset="1" stop-color="#dbf2ff" stop-opacity=".1"/></linearGradient>
+  </defs>
+  <rect width="1280" height="420" fill="url(#bg)"/><rect width="1280" height="420" fill="url(#glow)"/>
+  <g fill="#fff"><circle cx="90" cy="60" r="1.4" opacity=".8"/><circle cx="240" cy="130" r="1" opacity=".6"/><circle cx="420" cy="40" r="1.6" opacity=".9"/><circle cx="610" cy="96" r="1" opacity=".5"/><circle cx="780" cy="52" r="1.3" opacity=".8"/><circle cx="930" cy="140" r="1" opacity=".6"/><circle cx="1090" cy="64" r="1.5" opacity=".9"/><circle cx="1210" cy="150" r="1" opacity=".5"/><circle cx="520" cy="170" r="1" opacity=".5"/><circle cx="160" cy="210" r="1.2" opacity=".6"/></g>
+  <!-- faceted planet limb -->
+  <g stroke="rgba(0,0,0,.18)" stroke-width="1">
+    <polygon points="620,420 760,300 900,360" fill="url(#t1)"/><polygon points="760,300 900,360 880,290" fill="url(#t2)"/>
+    <polygon points="900,360 880,290 1010,320" fill="url(#t3)"/><polygon points="880,290 1010,320 1000,262" fill="url(#t1)"/>
+    <polygon points="1010,320 1000,262 1140,300" fill="url(#t2)"/><polygon points="1000,262 1140,300 1130,240" fill="url(#t3)"/>
+    <polygon points="1140,300 1130,240 1280,270 1280,420" fill="url(#t1)"/><polygon points="900,360 1010,320 1040,420" fill="url(#t2)"/>
+    <polygon points="1010,320 1140,300 1040,420" fill="url(#t3)"/><polygon points="1140,300 1280,420 1040,420" fill="url(#t1)"/>
+    <polygon points="620,420 900,360 900,420" fill="url(#t3)"/><polygon points="760,300 620,420 700,330" fill="url(#t2)"/>
+    <polygon points="700,330 620,420 560,420" fill="#8c2a17"/><polygon points="900,420 900,360 1040,420" fill="url(#t2)"/>
+  </g>
+  <path d="M560 420 C 700 290, 900 220, 1280 250" fill="none" stroke="#ffd1a8" stroke-opacity=".7" stroke-width="2"/>
+  <ellipse cx="880" cy="170" rx="470" ry="118" transform="rotate(-9 880 170)" fill="none" stroke="url(#orbit)" stroke-width="3"/>
+  <circle cx="735" cy="262" r="46" fill="url(#sat)"/><circle cx="735" cy="262" r="6" fill="#fff"/>
+  <g font-family="Unbounded,Inter,'Helvetica Neue',Arial,sans-serif">
+    <text x="64" y="200" fill="#fff" font-size="76" font-weight="700" letter-spacing="14">PERIGEE</text>
+    <text x="68" y="248" fill="#f2d9cf" font-size="22" font-family="Inter,'Helvetica Neue',Arial,sans-serif" letter-spacing=".5">The control room your Starlink Wi-Fi never had.</text>
+    <text x="68" y="290" fill="#ff8a5c" font-size="14" font-weight="600" letter-spacing="4">iOS · macOS · OPEN SOURCE · UNOFFICIAL</text>
+  </g>
+</svg>

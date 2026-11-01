@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API & safety model · Perigee</title><meta name="description" content="How Perigee talks to Starlink's local gRPC API, what it blocks, and how writes work."><meta name="theme-color" content="#05070a"><link rel="icon" href="assets/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css"></head><body>
+<nav><div class="wrap"><a class="brand" href="index.html"><img src="assets/icon-512.png" alt="">PERIGEE</a>
+<div class="links"><a href="index.html#features">Features</a><a href="guide.html">Guide</a><a href="api.html">API &amp; safety</a><a class="btn primary" style="padding:8px 16px" href="https://github.com/noktirnal42/perigee">GitHub</a></div></div></nav>
+<div class="wrap doc">
+<aside><a href="#arch">Architecture</a><a href="#api">The local API</a><a href="#safety">Safety model</a><a href="#writes">Write protocol</a><a href="#perm">What's denied</a><a href="#tests">Testing</a><a href="#sky">Satellite maths</a></aside>
+<article>
+<span class="eyebrow">Reference</span><h1 style="font-size:clamp(2rem,4.5vw,3.2rem)">API &amp; safety model</h1>
+<p class="lead" style="margin-top:16px">Everything Perigee does is a documented gRPC call to your own hardware. This page explains the shape of that API and the guard rails around it.</p>
+
+<h2 id="arch">Architecture</h2>
+<pre><code>┌────────────── Perigee (SwiftUI) ──────────────┐
+│ Home · Network · Tune · Dish · Satellites · … │
+└───────────────┬───────────────────────────────┘
+                │  @Observable StarlinkSession (polling, change log)
+┌───────────────▼───────────────────────────────┐
+│ StarlinkKit  (Swift package)                  │
+│  RouterService · DishService  → domain models │
+│  WifiSetting / DishSetting    → single writes │
+│  Advisor · Presets · Stall analysis · SGP4    │
+│  GuardedTransport  ◀── MethodPolicy + WriteGate│
+└───────────────┬───────────────────────────────┘
+                │  grpc-swift 2 · HTTP/2 · plaintext (LAN)
+      ┌─────────▼─────────┐        ┌─────────────┐
+      │ Router 192.168.1.1│        │ Dish        │
+      │ :9000             │        │ 192.168.100.1:9200 │
+      └───────────────────┘        └─────────────┘</code></pre>
+<p>The protocol stubs are generated from the devices' own server-reflection output (<code>reference/*.protoset</code>) with <code>Scripts/generate-protos.sh</code>. Router and dish have slightly different schemas, so they live in separate modules (<code>RouterAPI</code>, <code>DishAPI</code>).</p>
+
+<h2 id="api">The local API</h2>
+<p>Both devices expose <code>SpaceX.API.Device.Device/Handle</code>, a unary call taking a <code>Request</code> (a <code>oneof</code> with ~100 methods) and returning a <code>Response</code>. Perigee uses a small, read-mostly subset:</p>
+<table><tr><th>Area</th><th>Methods</th></tr>
+<tr><td>Router reads</td><td><code>get_status</code> · <code>wifi_get_clients</code> · <code>wifi_get_config</code> · <code>get_radio_stats</code> · <code>get_history</code> · <code>wifi_get_client_history</code> · <code>get_speedtest_status</code></td></tr>
+<tr><td>Dish reads</td><td><code>get_status</code> · <code>dish_get_config</code> · <code>dish_get_obstruction_map</code> · <code>get_history</code></td></tr>
+<tr><td>Writes</td><td><code>wifi_set_config</code> · <code>wifi_set_client_given_name</code> · <code>dish_set_config</code></td></tr>
+<tr><td>Destructive</td><td><code>reboot</code> · <code>dish_stow</code> (slide-to-confirm)</td></tr></table>
+
+<h2 id="safety">Safety model</h2>
+<p>Every request passes through <code>GuardedTransport</code>, which classifies the method by name:</p>
+<table><tr><th>Class</th><th>Rule</th></tr>
+<tr><td><span class="tag ok">read / probe</span></td><td>Always allowed.</td></tr>
+<tr><td><span class="tag warn">write</span></td><td>Only when “Enable writes” is on (off at every launch).</td></tr>
+<tr><td><span class="tag warn">destructive</span></td><td>Writes on <b>and</b> inside a completed slide-to-confirm (a task-local token).</td></tr>
+<tr><td><span class="tag no">forbidden</span></td><td>Never sent: <code>authenticate</code>, <code>signed_request</code>, <code>sensitive_request</code>, <code>initiate_remote_ssh</code>, every <code>*factory_reset</code>, <code>*test_mode</code>, debug, firmware/unlock and more. <b>Anything not explicitly listed is forbidden.</b></td></tr></table>
+<p>Wi-Fi passwords are never held in view-model state, are masked until you authenticate, and are never logged. The exported report omits them and masks MAC addresses.</p>
+
+<h2 id="writes">Write protocol</h2>
+<p>The router accepts a partial <code>WifiConfig</code> and only changes fields whose matching <code>apply_&lt;field&gt;</code> boolean is set. Perigee's <code>WifiSetting.makeConfig</code> therefore builds a config containing <i>exactly</i> one field and its flag:</p>
+<pre><code>WifiSetting.channel(.ghz5, 149)  →  WifiConfig {
+    channel_5ghz: 149
+    apply_channel_5ghz: true
+}</code></pre>
+<p>Proto3 omits default values, so channel <code>0</code> (“auto”) is expressed by the flag alone. After sending, the service re-reads the config (retrying while Wi-Fi restarts) and only reports <i>verified</i> when the router returns the new value. If the value changed since you reviewed it, the write is refused.</p>
+
+<h2 id="perm">What the router denies over the LAN</h2>
+<table><tr><th>Call</th><th>Result</th></tr>
+<tr><td><code>wifi_get_channels</code></td><td>PermissionDenied</td></tr><tr><td><code>wifi_get_ping_metrics</code></td><td>PermissionDenied</td></tr>
+<tr><td><code>wifi_get_traceroute_status</code></td><td>PermissionDenied</td></tr><tr><td>dish <code>get_location</code></td><td>“Disabled due to policy”</td></tr></table>
+<p>Perigee probes capabilities at connect time and shows them under <i>Diagnose → What this connection allows</i>. A denial doesn't tell us what credentials would unlock it, so the app doesn't claim to know.</p>
+
+<h2 id="tests">Testing</h2>
+<p>The kit ships 40+ tests: single-field/flag construction for every setting, revert and stale-value logic against an in-memory mock router, the safety gate (including every forbidden method), fixture decoding, stall analysis, and SGP4 against Vallado's reference vectors. No test ever talks to real hardware. <code>perigee-probe</code> is a read-only CLI that decodes every read endpoint from a live router and proves the write gate is closed.</p>
+<pre><code>cd Packages/StarlinkKit && swift test
+swift run perigee-probe          # read-only live check
+swift run perigee-probe ping     # 30 s ICMP stall test</code></pre>
+
+<h2 id="sky">Satellite maths</h2>
+<p>Orbital elements (TLEs) for the Starlink group come from CelesTrak and are cached. Positions use a near-earth SGP4 propagator (WGS-72), rotated to Earth-fixed coordinates by GMST, then converted to azimuth/elevation for your location. The dish reports its boresight azimuth and elevation; the satellite with the smallest angular separation is shown as the likely connection, with confidence <i>high</i> (&lt; 1.5°), <i>medium</i> (&lt; 4°) or <i>low</i>.</p>
+</article></div>
+<footer><div class="wrap cols"><div class="fine">Perigee is an unofficial companion, not affiliated with SpaceX or Starlink. Do not use it on equipment you don't own.</div><div><a href="index.html">Home</a> · <a href="guide.html">Guide</a></div></div></footer>
+<script src="assets/site.js"></script></body></html>

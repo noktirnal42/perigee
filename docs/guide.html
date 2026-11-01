@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tuning guide · Perigee</title><meta name="description" content="How to fix Wi-Fi stalls and bufferbloat on Starlink with Perigee."><meta name="theme-color" content="#05070a"><link rel="icon" href="assets/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css"></head><body>
+<nav><div class="wrap"><a class="brand" href="index.html"><img src="assets/icon-512.png" alt="">PERIGEE</a>
+<div class="links"><a href="index.html#features">Features</a><a href="guide.html">Guide</a><a href="api.html">API &amp; safety</a><a class="btn primary" style="padding:8px 16px" href="https://github.com/noktirnal42/perigee">GitHub</a></div></div></nav>
+<div class="wrap doc">
+<aside><a href="#measure">1 · Measure</a><a href="#channel">2 · Channel & DFS</a><a href="#width">3 · Width</a><a href="#cake">4 · CAKE / bufferbloat</a><a href="#ab">5 · A/B test</a><a href="#revert">6 · Reverting</a><a href="#trouble">Troubleshooting</a></aside>
+<article>
+<span class="eyebrow">Guide</span><h1 style="font-size:clamp(2rem,4.5vw,3.2rem)">Fix stalls, step by step</h1>
+<p class="lead" style="margin-top:16px">A workflow for cloud gaming (Xbox Cloud Gaming, GeForce NOW, Steam Link) over Starlink. The rule: change <b>one</b> thing, then measure again.</p>
+<div class="callout good"><b>Before you start.</b> Join your Starlink Wi-Fi, open Perigee, and check <i>Diagnose → What this connection allows</i>. Anything marked locked is blocked by the router itself, not by Perigee.</div>
+
+<h2 id="measure">1 · Measure the hop that matters</h2>
+<p>Open <b>Diagnose → Stall tester</b>. Pick <b>Router</b> as the target (this isolates the Wi-Fi hop between your device and the router), label the run “baseline”, and press <b>Start 30 s test</b>.</p>
+<ul><li><b>Loss</b> &gt; 1% or <b>stalls</b> ≥ 3 = a real problem for cloud gaming.</li><li>A stall is any ping that's lost or &gt; 20 ms; samples within 1 s merge into one episode. “Every 3 s” is a classic interference signature.</li><li>Run <b>Dish</b> too: if the dish is clean but the router isn't, the problem is your Wi-Fi, not the satellite link.</li></ul>
+<p>Then open <b>Network → Radios</b>. A 5 GHz frame-error rate above ~2% means the radio is receiving corrupted frames — interference.</p>
+
+<h2 id="channel">2 · Pick a stable channel; avoid DFS</h2>
+<p>By default the router chooses its 5 GHz channel and may move it. In <b>Tune → 5 GHz → Channel</b>, pin one. Prefer <b>non-DFS</b> channels (36–48 or 149–161): on DFS channels (52–144) the router must evacuate instantly when it hears radar, which drops every device.</p>
+<ul><li>Turn <b>DFS off</b> in <i>Radio behaviour</i> for the steadiest link.</li><li>If one block is noisy, try the other: 36–48 ↔ 149–161.</li></ul>
+
+<h2 id="width">3 · Use 80 MHz, not 160</h2>
+<p>Wider channels carry more peak throughput but need a clean slice of spectrum. For latency-sensitive play, <b>80 MHz</b> is the sweet spot. Leave wireless mode on automatic unless an old device misbehaves.</p>
+
+<h2 id="cake">4 · Tame bufferbloat with CAKE</h2>
+<p>Bufferbloat is the lag that appears when something else saturates your link. CAKE is a smart queue that keeps latency flat by shaping slightly under your real line speed.</p>
+<ol><li>Run a speed test and note your download rate.</li><li>In <b>Tune → Smart queue (CAKE)</b>, set the rate to about 90% of it, choose <b>Diffserv 4</b> so games outrank bulk downloads, and apply.</li><li>Re-test the stall tester while a large download runs.</li></ol>
+<div class="callout warn"><b>Units caveat.</b> The router's schema doesn't state the unit of the CAKE bandwidth field. Perigee assumes Mbit/s (the router's own ACK-queue values suggest it). Verify with a speed test after applying; revert is one tap.</div>
+
+<h2 id="ab">5 · A/B test your change</h2>
+<p>After each change run the stall tester again with a new label (“ch149 80MHz”). In <b>Saved runs</b>, tick two or more and press <b>Compare</b> for side-by-side bars of stalls, loss and p95, plus an overlaid latency trace. Perigee records the router's settings with each run so you can always see <i>why</i> two runs differ.</p>
+
+<h2 id="revert">6 · Reverting</h2>
+<p>Every write shows a <b>Revert</b> button in the result and in <i>Changes this session</i>. It writes the previous value back as another verified single-field change. (A setting that was previously “not set” can't be written back exactly, so Perigee tells you instead of guessing.)</p>
+
+<h2 id="trouble">Troubleshooting</h2>
+<table><tr><th>Symptom</th><th>What to try</th></tr>
+<tr><td>“Not on your Starlink network”</td><td>Join the router's Wi-Fi or Ethernet. On iOS allow <i>Local Network</i> for Perigee in Settings › Privacy.</td></tr>
+<tr><td>Everything works but “Channel survey” is locked</td><td>Expected: the router refuses it over the LAN. Perigee uses airtime counters instead.</td></tr>
+<tr><td>Wi-Fi dropped after applying</td><td>Normal: a radio change restarts Wi-Fi for 10–40 s. Rejoin; Perigee finishes verifying automatically.</td></tr>
+<tr><td>Writes are greyed out</td><td>Turn on <b>Enable writes</b> at the top of the Tune tab.</td></tr>
+<tr><td>No satellite match</td><td>Set your location in Satellites. The dish's GPS isn't readable from the LAN.</td></tr></table>
+</article></div>
+<footer><div class="wrap cols"><div class="fine">Perigee is an unofficial companion, not affiliated with SpaceX or Starlink.</div><div><a href="index.html">Home</a> · <a href="api.html">API &amp; safety</a></div></div></footer>
+<script src="assets/site.js"></script></body></html>
