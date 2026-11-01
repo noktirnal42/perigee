@@ -25,6 +25,8 @@ struct TrendsView: View {
     @State private var annotations: [HistoryAnnotation] = []
     @State private var uptime: Double?
     @State private var loaded = false
+    @State private var recap: WeeklyRecap?
+    @State private var recentAlerts: [TriggeredAlert] = []
 
     var body: some View {
         ScrollView {
@@ -35,6 +37,9 @@ struct TrendsView: View {
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(.top, 8)
 
                 PillPicker(options: TrendRange.allCases.map { ($0, $0.label) }, selection: $range)
+
+                if let recap { recapCard(recap) }
+                if !recentAlerts.isEmpty { recentAlertsCard }
 
                 if !loaded {
                     ProgressView().padding(40).frame(maxWidth: .infinity)
@@ -53,6 +58,10 @@ struct TrendsView: View {
         .navigationTitle("Trends")
         .customHeader()
         .task(id: range) { await reload() }
+        .task {
+            recap = await WeeklyRecap.compute(from: session.history)
+            recentAlerts = Array(await session.automation.fired.prefix(5))
+        }
     }
 
     private func reload() async {
@@ -65,6 +74,33 @@ struct TrendsView: View {
         annotations = await a
         uptime = await u
         loaded = true
+    }
+
+    private func recapCard(_ r: WeeklyRecap) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Label("Weekly recap", systemImage: "calendar").font(.headline)
+            Text(r.summary).font(.subheadline).foregroundStyle(.secondary)
+        }.padding(16).frame(maxWidth: .infinity, alignment: .leading).card()
+    }
+
+    private var recentAlertsCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionTitle("Recent alerts")
+            VStack(spacing: 0) {
+                ForEach(recentAlerts) { a in
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "bell.badge.fill").foregroundStyle(Theme.warn).frame(width: 22)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(a.title).font(.subheadline.weight(.medium))
+                            Text(a.message).font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer(minLength: 0)
+                        Text(Fmt.relative(a.date)).font(.caption2).foregroundStyle(.tertiary)
+                    }.padding(12)
+                    if a.id != recentAlerts.last?.id { Divider().overlay(.white.opacity(0.08)) }
+                }
+            }.card()
+        }
     }
 
     private var uptimeTile: some View {

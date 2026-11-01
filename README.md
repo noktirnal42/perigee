@@ -43,6 +43,7 @@ Perigee surfaces that API as a polished, safe, A/B-testable app.
 | **Network** | Devices with band/RSSI/link rate/history, rename, nodes, guest networks, Wi-Fi details (passwords masked behind Face ID / Touch ID). |
 | **Honest capability map** | Perigee probes each call at connect time and shows what the router refuses on the LAN (e.g. `PermissionDenied`) instead of failing silently. |
 | **Trends** | On-device history beyond the device's own 15-minute buffer: uptime, ping and obstruction over 24h/7d/30d, with a timeline of every tuning change, dish change and saved stall test. Nothing leaves the device. |
+| **Alerts** | Local notifications when router/dish go offline, obstruction spikes, or ping/loss cross a threshold you set — sustained, debounced, no server. Plus a weekly recap of uptime and your best/worst hour. |
 | **Native everywhere** | iPhone, iPad and a real Mac app: sidebar, toolbar, keyboard shortcuts, menu-bar extra with live ping, Dynamic Type, VoiceOver, Reduce Motion, dark-first design. |
 
 <p align="center">

@@ -81,6 +81,10 @@ public final class StarlinkSession {
     public let gate = WriteGate()
     public let results: ResultsStore
     public private(set) var history: HistoryStore
+    public private(set) var automation: AutomationEngine
+    /// Alerts that just fired and haven't been shown yet. The app layer drains this (`consumePendingAlerts()`)
+    /// to post system notifications; StarlinkKit itself never calls `UNUserNotificationCenter`.
+    public private(set) var pendingAlerts: [TriggeredAlert] = []
 
     private var router: RouterService?
     private var dish: DishService?
@@ -88,19 +92,23 @@ public final class StarlinkSession {
     private var tickCount = 0
     private let injectedSource: DataSource?
     private let injectedHistory: HistoryStore?
+    private let injectedAutomation: AutomationEngine?
     private let demoRefusesWrites: Bool
 
     /// - Parameter demoRefusesWrites: Demo mode only: behave like a router that answers every change with PermissionDenied
     ///   (what real Starlink routers do over the LAN), so that state can be previewed and tested.
     /// - Parameter history: Pass a specific store (e.g. for tests); otherwise one is chosen based on `source`.
+    /// - Parameter automation: Pass a specific engine (e.g. for tests); otherwise one is chosen based on `source`.
     public init(source: DataSource = .live, results: ResultsStore = ResultsStore(), demoRefusesWrites: Bool = false,
-                history: HistoryStore? = nil) {
+                history: HistoryStore? = nil, automation: AutomationEngine? = nil) {
         self.results = results
         self.injectedSource = source
         self.source = source
         self.demoRefusesWrites = demoRefusesWrites
         self.injectedHistory = history
         self.history = history ?? HistoryStore.makeDefault(for: source)
+        self.injectedAutomation = automation
+        self.automation = automation ?? AutomationEngine.makeDefault(for: source)
         build()
         if demoRefusesWrites && source == .demo { routerWritesRefused = true }
     }
@@ -132,6 +140,7 @@ public final class StarlinkSession {
         source = s
         reset()
         if injectedHistory == nil { history = HistoryStore.makeDefault(for: s) }
+        if injectedAutomation == nil { automation = AutomationEngine.makeDefault(for: s) }
         build()
         start()
     }
@@ -208,14 +217,25 @@ public final class StarlinkSession {
         }
         if routerReachable || dishReachable { lastUpdated = Date() }
 
-        await history.record(HistorySample(
+        let sample = HistorySample(
             routerReachable: routerReachable, dishReachable: dishReachable,
             internetPingMs: routerStatus?.internetPingMs, pingDropRate: routerStatus?.pingDropRate,
             obstructionFraction: dishStatus?.obstructionFraction,
             frameErrorRate5: radios.first(where: { $0.band == .ghz5 })?.frameErrorRate,
             frameErrorRate2: radios.first(where: { $0.band == .ghz2 })?.frameErrorRate,
             clientCount: routerReachable ? clients.count : nil
-        ))
+        )
+        await history.record(sample)
+        let newlyFired = await automation.evaluate(sample)
+        if !newlyFired.isEmpty { pendingAlerts.append(contentsOf: newlyFired) }
+    }
+
+    /// Drains and returns alerts that fired since the last drain. The app layer calls this to post system
+    /// notifications; StarlinkKit never schedules notifications itself.
+    @discardableResult
+    public func consumePendingAlerts() -> [TriggeredAlert] {
+        defer { pendingAlerts = [] }
+        return pendingAlerts
     }
 
     private func updateLink(routerError: DeviceError?, dishError: DeviceError?) {

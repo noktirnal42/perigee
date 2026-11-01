@@ -7,6 +7,7 @@ struct SettingsView: View {
     @State private var routerHost = ""
     @State private var dishHost = ""
     @State private var error: String?
+    @State private var rules: [AlertRule] = []
     static let repoURL = URL(string: "https://github.com/noktirnal42/perigee")!
 
     var body: some View {
@@ -30,6 +31,14 @@ struct SettingsView: View {
                     ExplainedToggle(title: "Enable writes", explanation: "Off by default every launch. While off, Perigee cannot change anything on your router or dish.", isOn: $s.writesEnabled)
                     Text("Authentication, signing, debug, factory-reset and test-mode methods are blocked in code and can never be sent, even with writes on. Wi-Fi passwords are hidden until you authenticate and are never logged.")
                         .font(.footnote).foregroundStyle(.secondary)
+                }
+                section("Alerts") {
+                    Text("Local notifications only, from this device's own history. Nothing is sent anywhere.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    ForEach($rules) { $rule in
+                        alertRuleRow($rule)
+                        if rule.id != rules.last?.id { Divider().overlay(.white.opacity(0.08)) }
+                    }
                 }
                 if session.writesEnabled {
                     section("Router") {
@@ -55,10 +64,28 @@ struct SettingsView: View {
         #endif
         .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         .onAppear { routerHost = session.routerHost; dishHost = session.dishHost }
+        .task { rules = await session.automation.rules }
     }
 
     private func section<C: View>(_ title: String, @ViewBuilder _ content: () -> C) -> some View {
         VStack(alignment: .leading, spacing: 10) { SectionTitle(title); VStack(alignment: .leading, spacing: 12, content: content).padding(16).frame(maxWidth: .infinity, alignment: .leading).card() }
+    }
+
+    private func alertRuleRow(_ rule: Binding<AlertRule>) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Toggle(isOn: Binding(get: { rule.wrappedValue.enabled }, set: { on in
+                rule.wrappedValue.enabled = on
+                Task { await session.automation.setRules(rules) }
+            })) {
+                Text(rule.wrappedValue.title).font(.body.weight(.medium))
+            }.toggleStyle(.switch).tint(Theme.ember)
+            if !rule.wrappedValue.metric.isReachability {
+                Text("Triggers after \(Int(rule.wrappedValue.sustainedFor))s sustained \(rule.wrappedValue.condition.symbol) \(rule.wrappedValue.metric.isFraction ? "\(Int(rule.wrappedValue.threshold * 100))%" : "\(Int(rule.wrappedValue.threshold)) \(rule.wrappedValue.metric.unit)").")
+                    .font(.footnote).foregroundStyle(.secondary)
+            } else {
+                Text("Triggers after \(Int(rule.wrappedValue.sustainedFor))s not answering.").font(.footnote).foregroundStyle(.secondary)
+            }
+        }.padding(.vertical, 4)
     }
     private func field(_ title: String, text: Binding<String>, hint: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {

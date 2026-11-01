@@ -29,6 +29,7 @@
 		65FB16E7A437CE60D74D172A /* Surfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483E163A51FA06417BB0AFF /* Surfaces.swift */; };
 		6BCAA096C0503F7A9F966DBF /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE898340AC1D8088F42612D /* Format.swift */; };
 		6DA06E23C42210665A538DD0 /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DBDE0B0BBA7E85C7A33FE /* Biometrics.swift */; };
+		6F17721A3B199A56AA8F794C /* AlertNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A24181BF626D9ECFA73E06 /* AlertNotifier.swift */; };
 		732AC6D875E14FA61DE2B9F8 /* HeroScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BA58E9A0D101200318045B /* HeroScene.swift */; };
 		9807CD5BC66FEAF0BC76A173 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB30E922114F342D2411DC1 /* Theme.swift */; };
 		98692C846142AEF87EE819B0 /* SkyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4EF8605F587907B76C1752 /* SkyModel.swift */; };
@@ -45,6 +46,7 @@
 		C8433C9C6955D91BB89FE937 /* SkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C46F2E43AAC89C7F21C67 /* SkyView.swift */; };
 		C98DFA5736B967D20CECC4D1 /* SkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C46F2E43AAC89C7F21C67 /* SkyView.swift */; };
 		CC4A69F7AF6706B4AB165E15 /* SkyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4EF8605F587907B76C1752 /* SkyModel.swift */; };
+		CDA649B8CE3983CD6B267101 /* AlertNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A24181BF626D9ECFA73E06 /* AlertNotifier.swift */; };
 		D666198CA9069E9F77214353 /* TuneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A3C0E0171EFB4B0A2FA43 /* TuneView.swift */; };
 		D71D8B81A7D3A0F940794CAA /* GlobeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D21835F7F0E690D54771F3D3 /* GlobeView.swift */; };
 		DCE82229E506F4FA182D3EB9 /* PerigeeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BE2ABDFA9DD1F4AD9ABDAD /* PerigeeApp.swift */; };
@@ -78,6 +80,7 @@
 		8483E163A51FA06417BB0AFF /* Surfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Surfaces.swift; sourceTree = "<group>"; };
 		86DAB61B9CE498E6DBDC56AC /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		92C9FB9EBBEFEEE7482743E3 /* DishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishView.swift; sourceTree = "<group>"; };
+		93A24181BF626D9ECFA73E06 /* AlertNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertNotifier.swift; sourceTree = "<group>"; };
 		981BD4B7896BFFB40A086CB0 /* MenuBarStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatus.swift; sourceTree = "<group>"; };
 		A13C46F2E43AAC89C7F21C67 /* SkyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyView.swift; sourceTree = "<group>"; };
 		AD7DBDE0B0BBA7E85C7A33FE /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
@@ -142,6 +145,7 @@
 		436AB76BF105CD763EA17DB6 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				93A24181BF626D9ECFA73E06 /* AlertNotifier.swift */,
 				AD7DBDE0B0BBA7E85C7A33FE /* Biometrics.swift */,
 				2CE898340AC1D8088F42612D /* Format.swift */,
 			);
@@ -345,6 +349,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDA649B8CE3983CD6B267101 /* AlertNotifier.swift in Sources */,
 				6DA06E23C42210665A538DD0 /* Biometrics.swift in Sources */,
 				F72AE50652E7731E27972632 /* ChangeSheets.swift in Sources */,
 				9F806E1B6EB179AB185D6FC6 /* Charts.swift in Sources */,
@@ -374,6 +379,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F17721A3B199A56AA8F794C /* AlertNotifier.swift in Sources */,
 				15E3CDC80B707484CF1F5C38 /* Biometrics.swift in Sources */,
 				0FBBF9502A42DF69A5E8C174 /* ChangeSheets.swift in Sources */,
 				339C0D4AAB7D0FC742CE80D7 /* Charts.swift in Sources */,

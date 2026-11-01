@@ -32,7 +32,10 @@ struct RootView: View {
         content
             .tint(Theme.ember)
             .preferredColorScheme(.dark)
-            .task { session.start() }
+            .task { session.start(); AlertNotifier.requestAuthorization() }
+            .onChange(of: session.pendingAlerts.count) { _, _ in
+                for alert in session.consumePendingAlerts() { AlertNotifier.post(alert) }
+            }
             .overlay(alignment: .top) { if session.writesEnabled { WritesBanner() } }
     }
 
