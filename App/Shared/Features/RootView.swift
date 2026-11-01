@@ -1,5 +1,8 @@
 import SwiftUI
 import StarlinkKit
+#if os(iOS)
+import WidgetKit
+#endif
 
 enum AppSection: String, CaseIterable, Identifiable, Hashable {
     case home, network, tune, dish, diagnostics, trends
@@ -36,7 +39,12 @@ struct RootView: View {
             .onChange(of: session.pendingAlerts.count) { _, _ in
                 for alert in session.consumePendingAlerts() { AlertNotifier.post(alert) }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .perigeeOpenDiagnostics)) { _ in selection = .diagnostics }
+            .onReceive(NotificationCenter.default.publisher(for: .perigeeOpenTune)) { _ in selection = .tune }
             .overlay(alignment: .top) { if session.writesEnabled { WritesBanner() } }
+            #if os(iOS)
+            .onChange(of: session.lastUpdated) { _, _ in WidgetCenter.shared.reloadAllTimelines() }
+            #endif
     }
 
     @ViewBuilder private var content: some View {

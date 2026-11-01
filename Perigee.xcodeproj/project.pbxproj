@@ -23,6 +23,8 @@
 		339C0D4AAB7D0FC742CE80D7 /* Charts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC72D8CDD0A4B8D0F5D6758 /* Charts.swift */; };
 		37E31B0F70603AB3DDE89A01 /* MenuBarStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981BD4B7896BFFB40A086CB0 /* MenuBarStatus.swift */; };
 		3E00702E8EC6C41D48BFD357 /* DiagnosticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC93BEBA065738FDF5A636A /* DiagnosticsView.swift */; };
+		4796F7E7DCAD0B68E01A2C1D /* PerigeeWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9F9EDD8041AC5A71FE1141 /* PerigeeWidgetsBundle.swift */; };
+		49138B729C66911DDAEA2A9F /* StarlinkKit in Frameworks */ = {isa = PBXBuildFile; productRef = 23B7F0AFE34FC659DE491AFD /* StarlinkKit */; };
 		5458B7E2ACC47647044B279E /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DAB61B9CE498E6DBDC56AC /* RootView.swift */; };
 		5EAF0B0F2400AE8AFD10B8AD /* NetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8141B778034F6ABBF2B2657E /* NetworkView.swift */; };
 		65E8A4BC62C95CA6AECA80DB /* DishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C9FB9EBBEFEEE7482743E3 /* DishView.swift */; };
@@ -31,6 +33,7 @@
 		6DA06E23C42210665A538DD0 /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DBDE0B0BBA7E85C7A33FE /* Biometrics.swift */; };
 		6F17721A3B199A56AA8F794C /* AlertNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A24181BF626D9ECFA73E06 /* AlertNotifier.swift */; };
 		732AC6D875E14FA61DE2B9F8 /* HeroScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BA58E9A0D101200318045B /* HeroScene.swift */; };
+		76264D378C6DF0ABFED99BC9 /* StatusWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24A65314EAE5C6370DD30F4 /* StatusWidget.swift */; };
 		9807CD5BC66FEAF0BC76A173 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB30E922114F342D2411DC1 /* Theme.swift */; };
 		98692C846142AEF87EE819B0 /* SkyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4EF8605F587907B76C1752 /* SkyModel.swift */; };
 		9AADCC4ECE5145C45AD8C606 /* DiagnosticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC93BEBA065738FDF5A636A /* DiagnosticsView.swift */; };
@@ -40,6 +43,7 @@
 		B296B9CB9B4F59A14AF5DD9A /* DishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C9FB9EBBEFEEE7482743E3 /* DishView.swift */; };
 		B2C92004278F3A5B9A3577CF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBFD4BFEDD5CD89E378ADA8 /* SettingsView.swift */; };
 		B5A6C2C400F45FC91AF6FF09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F526601528B0621DF089231C /* Assets.xcassets */; };
+		BA9E7F38CB175494EBB74D9F /* PerigeeIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EBED576EC355E3D83EFAF5 /* PerigeeIntents.swift */; };
 		BEC0ECA6CA817DA2CB8EE703 /* SlideToConfirm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197114BF1B5A7F5D4636950D /* SlideToConfirm.swift */; };
 		C5B4F12C71F0FECC786E2C73 /* TrendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66257B2995451A4E4243BECA /* TrendsView.swift */; };
 		C6BA5476F2F1E3E1D6B8F971 /* Surfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483E163A51FA06417BB0AFF /* Surfaces.swift */; };
@@ -47,10 +51,12 @@
 		C98DFA5736B967D20CECC4D1 /* SkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C46F2E43AAC89C7F21C67 /* SkyView.swift */; };
 		CC4A69F7AF6706B4AB165E15 /* SkyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4EF8605F587907B76C1752 /* SkyModel.swift */; };
 		CDA649B8CE3983CD6B267101 /* AlertNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A24181BF626D9ECFA73E06 /* AlertNotifier.swift */; };
+		CECE76D7A383140BF63E3BDD /* PerigeeWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2F3AEB708C3BEB3077A7953E /* PerigeeWidgetsExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D666198CA9069E9F77214353 /* TuneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2A3C0E0171EFB4B0A2FA43 /* TuneView.swift */; };
 		D71D8B81A7D3A0F940794CAA /* GlobeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D21835F7F0E690D54771F3D3 /* GlobeView.swift */; };
 		DCE82229E506F4FA182D3EB9 /* PerigeeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BE2ABDFA9DD1F4AD9ABDAD /* PerigeeApp.swift */; };
 		DF94C44A2972B066DC9F0509 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FEEA74B49A2CA653F19C821 /* HomeView.swift */; };
+		E1E5A05923AB005B595E86FA /* PerigeeIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EBED576EC355E3D83EFAF5 /* PerigeeIntents.swift */; };
 		E2435228D76A6566080691EE /* PerigeeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BE2ABDFA9DD1F4AD9ABDAD /* PerigeeApp.swift */; };
 		E4E1F86F6FA196FA447EC02B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBFD4BFEDD5CD89E378ADA8 /* SettingsView.swift */; };
 		E901C43299140132A6EBF115 /* HeroScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BA58E9A0D101200318045B /* HeroScene.swift */; };
@@ -61,18 +67,45 @@
 		F72AE50652E7731E27972632 /* ChangeSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F66726FFEAC47AF2C2BE9B8D /* ChangeSheets.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5EF6740381096FB6790EB933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FFF0B70B1D444AF749941934 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0E2D397C39D8D37C79ACB522;
+			remoteInfo = PerigeeWidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A4DC45130136127877667F4F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				CECE76D7A383140BF63E3BDD /* PerigeeWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		197114BF1B5A7F5D4636950D /* SlideToConfirm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideToConfirm.swift; sourceTree = "<group>"; };
 		1E2A3C0E0171EFB4B0A2FA43 /* TuneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuneView.swift; sourceTree = "<group>"; };
 		1EBFD4BFEDD5CD89E378ADA8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		269CF98B47860BDADFC22B21 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2CE898340AC1D8088F42612D /* Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Format.swift; sourceTree = "<group>"; };
+		2F3AEB708C3BEB3077A7953E /* PerigeeWidgetsExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = PerigeeWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		32BA58E9A0D101200318045B /* HeroScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroScene.swift; sourceTree = "<group>"; };
+		3828F0ACCB8F8525B9FFD0F9 /* Perigee.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Perigee.entitlements; sourceTree = "<group>"; };
 		3B83513AC0DFAB73B4AABABD /* Perigee.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Perigee.entitlements; sourceTree = "<group>"; };
 		3FEEA74B49A2CA653F19C821 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		51ABEB5F525D699C4EF3A954 /* Perigee_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Perigee_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52BE2ABDFA9DD1F4AD9ABDAD /* PerigeeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerigeeApp.swift; sourceTree = "<group>"; };
 		66257B2995451A4E4243BECA /* TrendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendsView.swift; sourceTree = "<group>"; };
+		6A9F9EDD8041AC5A71FE1141 /* PerigeeWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerigeeWidgetsBundle.swift; sourceTree = "<group>"; };
 		732E1480F60928A626AA3D46 /* StarlinkKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StarlinkKit; path = Packages/StarlinkKit; sourceTree = SOURCE_ROOT; };
 		7AB30E922114F342D2411DC1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		7BC72D8CDD0A4B8D0F5D6758 /* Charts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Charts.swift; sourceTree = "<group>"; };
@@ -84,9 +117,11 @@
 		981BD4B7896BFFB40A086CB0 /* MenuBarStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatus.swift; sourceTree = "<group>"; };
 		A13C46F2E43AAC89C7F21C67 /* SkyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyView.swift; sourceTree = "<group>"; };
 		AD7DBDE0B0BBA7E85C7A33FE /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
+		B2EBED576EC355E3D83EFAF5 /* PerigeeIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerigeeIntents.swift; sourceTree = "<group>"; };
 		BA3E37CD0AB0B4E9A0516245 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D16D91C1540063A163003408 /* Perigee_macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Perigee_macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D21835F7F0E690D54771F3D3 /* GlobeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeView.swift; sourceTree = "<group>"; };
+		D24A65314EAE5C6370DD30F4 /* StatusWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusWidget.swift; sourceTree = "<group>"; };
 		DFC93BEBA065738FDF5A636A /* DiagnosticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsView.swift; sourceTree = "<group>"; };
 		E05A03C03C518D9221F1DA42 /* SkyChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyChartView.swift; sourceTree = "<group>"; };
 		EF4EF8605F587907B76C1752 /* SkyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyModel.swift; sourceTree = "<group>"; };
@@ -100,6 +135,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0FC3E00A15459BC64A0C6D7 /* StarlinkKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5F9705ACE4B38478C4035405 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49138B729C66911DDAEA2A9F /* StarlinkKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +162,7 @@
 			children = (
 				CE5B3D4AB25806A6D7D95158 /* App */,
 				2603758F4BE4531702602013 /* Packages */,
+				30FA8B302F2A10BB3F5F5E46 /* Widgets */,
 				E5B8AB1BE4F516BDDA158FF0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -142,6 +186,15 @@
 			path = Design;
 			sourceTree = "<group>";
 		};
+		30FA8B302F2A10BB3F5F5E46 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				6A9F9EDD8041AC5A71FE1141 /* PerigeeWidgetsBundle.swift */,
+				D24A65314EAE5C6370DD30F4 /* StatusWidget.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
 		436AB76BF105CD763EA17DB6 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,8 +209,17 @@
 			isa = PBXGroup;
 			children = (
 				269CF98B47860BDADFC22B21 /* Assets.xcassets */,
+				3828F0ACCB8F8525B9FFD0F9 /* Perigee.entitlements */,
 			);
 			path = iOS;
+			sourceTree = "<group>";
+		};
+		9BA0ACA97565E656975026C7 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				B2EBED576EC355E3D83EFAF5 /* PerigeeIntents.swift */,
+			);
+			path = Intents;
 			sourceTree = "<group>";
 		};
 		B17F7CC0555178F171219E6C /* macOS */ = {
@@ -195,6 +257,7 @@
 			children = (
 				51ABEB5F525D699C4EF3A954 /* Perigee_iOS.app */,
 				D16D91C1540063A163003408 /* Perigee_macOS.app */,
+				2F3AEB708C3BEB3077A7953E /* PerigeeWidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -215,6 +278,7 @@
 				2C1E9B3E0AA2327472497E3D /* Design */,
 				FE2B3F6B1A0C3788B690E28C /* Features */,
 				F5F9C176E0B70185657F4C0E /* Graphics */,
+				9BA0ACA97565E656975026C7 /* Intents */,
 				436AB76BF105CD763EA17DB6 /* Support */,
 			);
 			path = Shared;
@@ -241,6 +305,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0E2D397C39D8D37C79ACB522 /* PerigeeWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20747914E11285E5BED7FEC9 /* Build configuration list for PBXNativeTarget "PerigeeWidgetsExtension" */;
+			buildPhases = (
+				6A9C4D73063E76B20D1040BE /* Sources */,
+				5F9705ACE4B38478C4035405 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PerigeeWidgetsExtension;
+			packageProductDependencies = (
+				23B7F0AFE34FC659DE491AFD /* StarlinkKit */,
+			);
+			productName = PerigeeWidgetsExtension;
+			productReference = 2F3AEB708C3BEB3077A7953E /* PerigeeWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		6A8AC116A22F3CD3F1075FA1 /* Perigee_macOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B1DD60F83EB5B5CC7D275BE /* Build configuration list for PBXNativeTarget "Perigee_macOS" */;
@@ -268,10 +351,12 @@
 				34979B5E2C842658A8BBF0DF /* Sources */,
 				4DF2FA4BE20886C5E0FB38BC /* Resources */,
 				4DB27D3872FA57436E8D7038 /* Frameworks */,
+				A4DC45130136127877667F4F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B60A8FE0CE4BB225DB6C3A6B /* PBXTargetDependency */,
 			);
 			name = Perigee_iOS;
 			packageProductDependencies = (
@@ -290,6 +375,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					0E2D397C39D8D37C79ACB522 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
 					6A8AC116A22F3CD3F1075FA1 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -319,6 +408,7 @@
 			targets = (
 				936033960465B750C1E245E1 /* Perigee_iOS */,
 				6A8AC116A22F3CD3F1075FA1 /* Perigee_macOS */,
+				0E2D397C39D8D37C79ACB522 /* PerigeeWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -362,6 +452,7 @@
 				37E31B0F70603AB3DDE89A01 /* MenuBarStatus.swift in Sources */,
 				5EAF0B0F2400AE8AFD10B8AD /* NetworkView.swift in Sources */,
 				E2435228D76A6566080691EE /* PerigeeApp.swift in Sources */,
+				BA9E7F38CB175494EBB74D9F /* PerigeeIntents.swift in Sources */,
 				5458B7E2ACC47647044B279E /* RootView.swift in Sources */,
 				B2C92004278F3A5B9A3577CF /* SettingsView.swift in Sources */,
 				082F94AFD2A24633F936FC2A /* SkyChartView.swift in Sources */,
@@ -372,6 +463,15 @@
 				1E1DDB38065F898CF386232F /* Theme.swift in Sources */,
 				C5B4F12C71F0FECC786E2C73 /* TrendsView.swift in Sources */,
 				D666198CA9069E9F77214353 /* TuneView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A9C4D73063E76B20D1040BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4796F7E7DCAD0B68E01A2C1D /* PerigeeWidgetsBundle.swift in Sources */,
+				76264D378C6DF0ABFED99BC9 /* StatusWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +492,7 @@
 				1B9B37A614D10FA3C4F887AE /* MenuBarStatus.swift in Sources */,
 				2C0358F500590B873CD4128D /* NetworkView.swift in Sources */,
 				DCE82229E506F4FA182D3EB9 /* PerigeeApp.swift in Sources */,
+				E1E5A05923AB005B595E86FA /* PerigeeIntents.swift in Sources */,
 				140E6DFADB701279BD28AD6A /* RootView.swift in Sources */,
 				E4E1F86F6FA196FA447EC02B /* SettingsView.swift in Sources */,
 				2F860FB8BBE754013E3D1E79 /* SkyChartView.swift in Sources */,
@@ -406,6 +507,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B60A8FE0CE4BB225DB6C3A6B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0E2D397C39D8D37C79ACB522 /* PerigeeWidgetsExtension */;
+			targetProxy = 5EF6740381096FB6790EB933 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2D5778C994821D2025E6413E /* Release */ = {
@@ -499,6 +608,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = App/iOS/Perigee.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Perigee;
@@ -521,6 +631,44 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		533762E34B1F09F18B4D2FF7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widgets/PerigeeWidgets.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.noktirnal.perigee.widgets;
+				PRODUCT_NAME = PerigeeWidgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5D0355ADDF692A21D017356E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widgets/PerigeeWidgets.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.noktirnal.perigee.widgets;
+				PRODUCT_NAME = PerigeeWidgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
 		};
 		82F10812DA9C7A1C06348059 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -552,6 +700,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = App/iOS/Perigee.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Perigee;
@@ -655,6 +804,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		20747914E11285E5BED7FEC9 /* Build configuration list for PBXNativeTarget "PerigeeWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				533762E34B1F09F18B4D2FF7 /* Debug */,
+				5D0355ADDF692A21D017356E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		4B1DD60F83EB5B5CC7D275BE /* Build configuration list for PBXNativeTarget "Perigee_macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -683,6 +841,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		23B7F0AFE34FC659DE491AFD /* StarlinkKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StarlinkKit;
+		};
 		495EC9BEE76909DC57461249 /* StarlinkKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StarlinkKit;

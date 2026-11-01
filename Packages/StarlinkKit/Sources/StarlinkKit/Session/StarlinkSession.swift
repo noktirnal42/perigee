@@ -228,6 +228,26 @@ public final class StarlinkSession {
         await history.record(sample)
         let newlyFired = await automation.evaluate(sample)
         if !newlyFired.isEmpty { pendingAlerts.append(contentsOf: newlyFired) }
+
+        if source == .live {
+            SnapshotStore.write(.init(
+                status: snapshotStatus, statusText: snapshotStatusText,
+                internetPingMs: routerStatus?.internetPingMs, obstructionFraction: dishStatus?.obstructionFraction,
+                clientCount: clients.count
+            ))
+        }
+    }
+
+    private var snapshotStatus: StatusSnapshot.Status {
+        switch link { case .online: .online; case .degraded: .degraded; case .offline: .offline; case .connecting: .connecting }
+    }
+    private var snapshotStatusText: String {
+        switch link {
+        case .online: "Online"
+        case .degraded(let why): why
+        case .offline: "Offline"
+        case .connecting: "Connecting"
+        }
     }
 
     /// Drains and returns alerts that fired since the last drain. The app layer calls this to post system

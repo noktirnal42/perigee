@@ -28,6 +28,9 @@ targets:
     dependencies:
       - package: StarlinkKit
         product: StarlinkKit
+      - target: PerigeeWidgetsExtension
+        embed: true
+        codeSign: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.noktirnal.perigee
@@ -46,6 +49,7 @@ targets:
         INFOPLIST_KEY_NSFaceIDUsageDescription: "Perigee uses Face ID to protect your Wi-Fi password before showing it."
         INFOPLIST_KEY_UIUserInterfaceStyle: Dark
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Perigee uses your location only on this device to work out which satellites are overhead. It is never sent anywhere."
+        CODE_SIGN_ENTITLEMENTS: App/iOS/Perigee.entitlements
   Perigee_macOS:
     type: application
     platform: macOS
@@ -71,3 +75,21 @@ targets:
         CODE_SIGN_ENTITLEMENTS: App/macOS/Perigee.entitlements
         ENABLE_HARDENED_RUNTIME: YES
         COMBINE_RESOLVED_SWIFTUI_APPEARANCE: NO
+  PerigeeWidgetsExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Widgets
+        excludes: ["Info.plist", "PerigeeWidgets.entitlements"]
+    dependencies:
+      - package: StarlinkKit
+        product: StarlinkKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.noktirnal.perigee.widgets
+        PRODUCT_NAME: PerigeeWidgets
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Widgets/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Widgets/PerigeeWidgets.entitlements
+        SKIP_INSTALL: YES

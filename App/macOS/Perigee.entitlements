@@ -8,5 +8,9 @@
     <true/>
     <key>com.apple.security.personal-information.location</key>
     <true/>
+    <key>com.apple.security.application-groups</key>
+    <array>
+        <string>group.dev.noktirnal.perigee</string>
+    </array>
 </dict>
 </plist>

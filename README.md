@@ -44,6 +44,7 @@ Perigee surfaces that API as a polished, safe, A/B-testable app.
 | **Honest capability map** | Perigee probes each call at connect time and shows what the router refuses on the LAN (e.g. `PermissionDenied`) instead of failing silently. |
 | **Trends** | On-device history beyond the device's own 15-minute buffer: uptime, ping and obstruction over 24h/7d/30d, with a timeline of every tuning change, dish change and saved stall test. Nothing leaves the device. |
 | **Alerts** | Local notifications when router/dish go offline, obstruction spikes, or ping/loss cross a threshold you set — sustained, debounced, no server. Plus a weekly recap of uptime and your best/worst hour. |
+| **Widgets & Shortcuts** | *(iOS)* Home/Lock Screen widgets show status, ping and obstruction from a shared on-device snapshot. Siri/Shortcuts can check status headlessly, or jump straight to the stall tester or Wi-Fi tuning — never acting on a setting without you. |
 | **Native everywhere** | iPhone, iPad and a real Mac app: sidebar, toolbar, keyboard shortcuts, menu-bar extra with live ping, Dynamic Type, VoiceOver, Reduce Motion, dark-first design. |
 
 <p align="center">
@@ -61,7 +62,7 @@ cd perigee
 open Perigee.xcodeproj
 ```
 
-1. Pick the **Perigee_macOS** or **Perigee_iOS** scheme and press **⌘R**.
+1. Pick the **Perigee_macOS** or **Perigee_iOS** scheme and press **⌘R**. Both targets use an App Group (for the widget/Shortcuts data bridge) and need a real development team — set one under *Signing & Capabilities* with your own Apple ID if Xcode doesn't pick one automatically.
 2. For a physical iPhone/iPad, select your device and set a signing team under *Signing & Capabilities*, or from the command line:
    ```bash
    xcodebuild -project Perigee.xcodeproj -scheme Perigee_iOS -destination 'id=<DEVICE_UDID>' \

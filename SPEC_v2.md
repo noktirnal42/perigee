@@ -111,7 +111,7 @@ Every v1 guarantee carries forward exactly as-is: read-only by default, single-f
 |---|---|---|
 | 1 ✅ *(shipped)* | History engine + trend charts + timeline annotations | Everything else (alerts, forecast, weekly recap) needs data to act on |
 | 2 ✅ *(shipped)* | Alerts/automation + weekly recap | Highest user-visible "it told me before I noticed" value |
-| 3 | Widgets, Live Activity, Shortcuts/App Intents, watchOS | High visibility, mostly additive UI work once History exists |
+| 3 ⚠️ *(partially shipped)* | Widgets + Shortcuts/App Intents shipped; Live Activity and watchOS deferred (see below) | High visibility, mostly additive UI work once History exists |
 | 4 | Multi-site/fleet + CloudKit sync | Needed before data model gets harder to migrate later |
 | 5 | Forecast engine + Tuning UX 2.0 guided flow | Builds directly on History + multi-site data |
 | 6 | Visual design v2 (Liquid Glass, globe v2, AR stretch), accessibility/localization hardening | Polish pass once feature surface is settled |
@@ -144,6 +144,18 @@ Every v1 guarantee carries forward exactly as-is: read-only by default, single-f
 | Safety | Full v1 model | Identical guarantees, extended to every new module, zero new egress |
 
 ---
+
+## 7a. Phase 3 scope note
+
+Shipped: a `StatusSnapshot`/`SnapshotStore` bridge (StarlinkKit writes a small JSON snapshot to the app's
+App Group container on every poll), an iOS Home/Lock Screen widget (`PerigeeWidgetsExtension`, small/medium +
+accessory circular/rectangular) that reads it headlessly, and three App Intents/Shortcuts: a fully headless
+"Is Starlink online?" status check, and "Run a stall test" / "Open Wi-Fi tuning" intents that open the app to
+the right screen rather than acting themselves — consistent with the safety model's "every write is explicit."
+
+Deliberately **not** built this pass: a macOS widget (iOS only for now), Live Activity for an in-progress stall
+test, and a watchOS app. Live Activity and watchOS are real additional scope (new entitlements/targets and, for
+watchOS, a full new platform target) better taken as their own pass rather than folded into this one.
 
 ## 8. Open questions for you
 
