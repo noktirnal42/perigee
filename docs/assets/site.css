@@ -33,8 +33,9 @@ nav .links a{color:var(--muted)} nav .links a:hover{color:#fff;text-decoration:n
 /* hero */
 .hero{position:relative;padding:96px 0 40px;overflow:hidden;isolation:isolate}
 .hero:before{content:"";position:absolute;inset:0;z-index:-2;background:
-  radial-gradient(900px 500px at 85% -10%,rgba(255,107,61,.35),transparent 60%),
-  radial-gradient(700px 500px at 0% 100%,rgba(107,188,255,.12),transparent 60%)}
+  linear-gradient(180deg,rgba(5,7,10,.55) 0%,rgba(5,7,10,.78) 55%,#05070a 100%),
+  radial-gradient(900px 500px at 85% -10%,rgba(255,107,61,.28),transparent 60%),
+  url(hero-mars.jpg) center 72%/cover no-repeat}
 .stars{position:absolute;inset:0;z-index:-1;opacity:.7;background-image:
   radial-gradient(1.2px 1.2px at 12% 20%,#fff,transparent),radial-gradient(1px 1px at 30% 70%,#fff,transparent),
   radial-gradient(1.4px 1.4px at 55% 15%,#fff,transparent),radial-gradient(1px 1px at 72% 40%,#fff,transparent),
@@ -114,3 +115,6 @@ footer .cols{display:flex;gap:40px;flex-wrap:wrap;justify-content:space-between}
   .phone-stack{height:520px} .doc aside{position:static} nav .links a:not(.btn){display:none} .mac-row{grid-template-columns:1fr}
 }
 @media(max-width:560px){.g3,.g4,.g2{grid-template-columns:1fr} .phone.b{display:none} .phone.a{right:50%;translate:50% 0;transform:rotate(2deg)} .phone-stack{height:540px}}
+
+.sky-band{background:linear-gradient(90deg,rgba(5,7,10,.94),rgba(5,7,10,.7)),url(mars-orbit.jpg) right center/cover no-repeat}
+.hw{display:flex;gap:26px;align-items:flex-end;justify-content:center;margin-top:36px;flex-wrap:wrap}.hw img{filter:drop-shadow(0 24px 30px rgba(0,0,0,.6));height:230px;width:auto}

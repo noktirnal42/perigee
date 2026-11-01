@@ -28,7 +28,7 @@ struct DishContent: View {
     private var hero: some View {
         let s = session.dishStatus
         return HStack(spacing: 16) {
-            DishRender(tilt: s?.tiltDeg ?? 24).frame(width: 130, height: 130)
+            Image("DishRender").resizable().scaledToFit().frame(width: 150, height: 125).shadow(color: .black.opacity(0.5), radius: 10, y: 8).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 6) {
                 Text("Your dish").font(.wide(22, weight: .bold))
                 StatusChip(text: s.map { $0.disablementCode == "OKAY" ? "Healthy" : $0.disablementCode.capitalized } ?? "Connecting",

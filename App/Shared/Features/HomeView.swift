@@ -175,6 +175,7 @@ struct OfflineCard: View {
     let reason: OfflineReason
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            Image("PlanetRing").resizable().scaledToFill().frame(height: 110).clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous)).opacity(0.85).accessibilityHidden(true)
             Label(reason.title, systemImage: "wifi.slash").font(.headline)
             Text(reason.advice).font(.subheadline).foregroundStyle(.secondary)
             if let e = session.lastError { Text(e).font(.caption).foregroundStyle(.white.opacity(0.45)) }

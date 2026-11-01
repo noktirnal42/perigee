@@ -137,6 +137,7 @@ struct SkyView: View {
 
     private var locationCard: some View {
         VStack(alignment: .leading, spacing: 12) {
+            Image("MarsOrbit").resizable().scaledToFill().frame(height: 150).clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous)).accessibilityHidden(true)
             Label("Where are you?", systemImage: "location.circle.fill").font(.headline)
             Text("To work out which satellites are overhead, Perigee needs your position. The dish's own GPS isn't available over the local network, so use this device's location or type it in. It never leaves your device.")
                 .font(.subheadline).foregroundStyle(.secondary)

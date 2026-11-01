@@ -63,6 +63,7 @@ struct NetworkView: View {
                 }.padding(14).card()
             }
             let meshCount = session.tuning?.meshNodeCount ?? 0
+            Image("NodePuck").resizable().scaledToFit().frame(height: 120).frame(maxWidth: .infinity).padding(.vertical, 6).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 6) {
                 Label(meshCount == 0 ? "No mesh nodes" : "\(meshCount) mesh node\(meshCount == 1 ? "" : "s")", systemImage: "point.3.connected.trianglepath.dotted")
                     .font(.headline)

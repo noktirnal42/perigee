@@ -7,7 +7,7 @@ enum HeroState { case online, degraded, offline, connecting
     var label: String { switch self { case .online: "Online"; case .degraded: "Degraded"; case .offline: "Offline"; case .connecting: "Connecting" } }
 }
 
-/// The hero: Mars terrain, dish, router and thin glowing beams with travelling pulses, plus a status chip.
+/// The hero: a Mars horizon, the dish and router renders, thin glowing beams with travelling pulses, and a status chip.
 struct HeroScene: View {
     var state: HeroState
     var dishTilt: Double = 24
@@ -17,25 +17,36 @@ struct HeroScene: View {
     var body: some View {
         GeometryReader { geo in
             let w = geo.size.width, h = geo.size.height
-            let dishRect = CGRect(x: w * 0.07, y: h * 0.34, width: min(w * 0.36, h * 0.5), height: min(w * 0.36, h * 0.5))
-            let routerRect = CGRect(x: w * 0.58, y: h * 0.50, width: min(w * 0.28, h * 0.36), height: min(w * 0.28, h * 0.36))
-            let dishAnchor = CGPoint(x: dishRect.midX + dishRect.width * 0.12, y: dishRect.minY + dishRect.height * 0.40)
-            let routerAnchor = CGPoint(x: routerRect.midX, y: routerRect.minY + routerRect.height * 0.30)
-            let satellite = CGPoint(x: w * 0.66, y: h * 0.14)
+            // Both renders keep their natural aspect ratio; they're laid out by height so they never distort.
+            let dishH = min(h * 0.46, w * 0.40), dishW = dishH * (1000.0 / 860.0)
+            let routerH = min(h * 0.40, w * 0.30), routerW = routerH * (565.0 / 900.0)
+            let dishRect = CGRect(x: w * 0.04, y: h * 0.36, width: dishW, height: dishH)
+            let routerRect = CGRect(x: w * 0.68, y: h * 0.44, width: routerW, height: routerH)
+            let dishAnchor = CGPoint(x: dishRect.midX + dishRect.width * 0.12, y: dishRect.minY + dishRect.height * 0.22)
+            let routerAnchor = CGPoint(x: routerRect.midX, y: routerRect.minY + routerRect.height * 0.08)
+            let satellite = CGPoint(x: w * 0.68, y: h * 0.14)
 
             ZStack {
-                MarsTerrain(animated: state != .offline)
-                DishRender(tilt: dishTilt, glow: state.dot)
-                    .frame(width: dishRect.width, height: dishRect.height).position(x: dishRect.midX, y: dishRect.midY)
-                RouterRender(led: state.dot)
-                    .frame(width: routerRect.width, height: routerRect.height).position(x: routerRect.midX, y: routerRect.midY)
-
+                TimelineView(.animation(minimumInterval: 1.0 / 20, paused: reduceMotion || state == .offline)) { tl in
+                    let t = reduceMotion ? 0 : tl.date.timeIntervalSinceReferenceDate
+                    Image("HeroMars").resizable().scaledToFill()
+                        .scaleEffect(1.08).offset(x: CGFloat(sin(t * 0.08)) * 10, y: 0)
+                        .frame(width: w, height: h).clipped()
+                }
+                LinearGradient(colors: [.black.opacity(0.35), .clear, Theme.void.opacity(0.9)], startPoint: .top, endPoint: .bottom)
+                Image("DishRender").resizable().scaledToFit()
+                    .frame(width: dishRect.width, height: dishRect.height)
+                    .shadow(color: .black.opacity(0.55), radius: 18, y: 14)
+                    .position(x: dishRect.midX, y: dishRect.midY)
+                Image("RouterRender").resizable().scaledToFit()
+                    .frame(width: routerRect.width, height: routerRect.height)
+                    .shadow(color: .black.opacity(0.55), radius: 16, y: 12)
+                    .position(x: routerRect.midX, y: routerRect.midY)
                 TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { tl in
                     Canvas { ctx, size in
                         let t = reduceMotion ? 0.35 : tl.date.timeIntervalSinceReferenceDate
                         beam(&ctx, from: satellite, to: dishAnchor, bend: -0.12, t: t, speed: 0.22, dashed: true)
                         beam(&ctx, from: dishAnchor, to: routerAnchor, bend: -0.22, t: t, speed: 0.35, dashed: state == .offline)
-                        // satellite glint
                         ctx.fill(Path(ellipseIn: CGRect(x: satellite.x - 3, y: satellite.y - 3, width: 6, height: 6)), with: .color(.white))
                         ctx.fill(Path(ellipseIn: CGRect(x: satellite.x - 14, y: satellite.y - 14, width: 28, height: 28)),
                                  with: .radialGradient(Gradient(colors: [state.beam.opacity(0.5), .clear]), center: satellite, startRadius: 0, endRadius: 14))

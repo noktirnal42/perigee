@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/assets/banner.svg" alt="Perigee — the control room your Starlink Wi-Fi never had" width="100%"></p>
+<p align="center"><img src="docs/assets/banner.png" alt="Perigee — the control room your Starlink Wi-Fi never had" width="100%"></p>
 
 <p align="center">
   <a href="https://noktirnal42.github.io/perigee/"><img alt="Website" src="https://img.shields.io/badge/website-noktirnal42.github.io%2Fperigee-ff6b3d?style=for-the-badge&labelColor=05070a"></a>
