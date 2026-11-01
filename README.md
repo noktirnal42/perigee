@@ -34,7 +34,7 @@ Perigee surfaces that API as a polished, safe, A/B-testable app.
 
 | | |
 |---|---|
-| **Wi-Fi tuning** | Channel, width (HT/VHT), wireless mode, TX power, DFS, band steering, per-band on/off, hidden SSID, DNS + secure DNS, **CAKE** queue and ACK filter, DSCP — with presets (*Gaming · Balanced · Max throughput*), plain-language explanations and impact warnings. |
+| **Wi-Fi tuning** | *(when your router accepts changes over the LAN — see [limitations](#known-limitations))* Channel, width (HT/VHT), wireless mode, TX power, DFS, band steering, per-band on/off, hidden SSID, DNS + secure DNS, **CAKE** queue and ACK filter, DSCP — with presets (*Gaming · Balanced · Max throughput*), plain-language explanations and impact warnings. |
 | **Verified writes** | Each change sets **exactly one field + its `apply_` flag**, re-reads the router to confirm, and offers a one-tap **revert**. |
 | **Stall tester** | 150 ICMP probes over 30 s: loss, median, p95, stall episodes and cadence. Save runs and **A/B-compare** them with Swift Charts. |
 | **Radio health** | Per-band frame-error rate, antenna RSSI, temperature, airtime → plain verdicts ("Dropping frames (1.8%)"). |
@@ -126,6 +126,7 @@ Tests cover single-field/`apply_` construction for every setting, revert and sta
 
 ## Known limitations
 
+* **Configuration writes may be refused.** On at least one tested router (Gen 2), `wifi_set_config` answers **PermissionDenied** over the LAN, almost certainly because changes require Starlink account authentication, which Perigee deliberately never uses. When that happens Perigee says so, stops trying, and falls back to *view-only*: everything is still readable and measurable, and it offers a shareable plan you can apply on your own router. Whether your firmware accepts LAN writes is something only a real attempt can tell; Perigee never sends a write just to test.
 * Over the LAN the router refuses `wifi_get_channels`, `wifi_get_ping_metrics` and `wifi_get_traceroute_status`, and the dish refuses `get_location`. Perigee shows this in the app. It does not know what credentials would unlock them.
 * The **CAKE bandwidth unit** isn't stated in the exported schema; Perigee assumes Mbit/s and tells you to verify.
 * The **connected satellite is an inference** (closest to the dish's reported boresight), not something Starlink publishes.

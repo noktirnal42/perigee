@@ -24,10 +24,11 @@ struct TuneView: View {
             VStack(spacing: Theme.spacing) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Wi-Fi tuning").font(.wide(28, weight: .bold))
-                    Text("Settings the official app hides").foregroundStyle(.secondary)
+                    Text(session.routerWritesRefused ? "View-only on this router" : "Settings the official app hides").foregroundStyle(.secondary)
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(.top, 8)
 
                 WriteModeCard()
+                if session.routerWritesRefused { WritesRefusedCard(device: .router) }
 
                 if let t = session.tuning {
                     presets(t)

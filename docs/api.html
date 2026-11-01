@@ -58,8 +58,11 @@
 <h2 id="perm">What the router denies over the LAN</h2>
 <table><tr><th>Call</th><th>Result</th></tr>
 <tr><td><code>wifi_get_channels</code></td><td>PermissionDenied</td></tr><tr><td><code>wifi_get_ping_metrics</code></td><td>PermissionDenied</td></tr>
-<tr><td><code>wifi_get_traceroute_status</code></td><td>PermissionDenied</td></tr><tr><td>dish <code>get_location</code></td><td>“Disabled due to policy”</td></tr></table>
+<tr><td><code>wifi_get_traceroute_status</code></td><td>PermissionDenied</td></tr><tr><td>dish <code>get_location</code></td><td>“Disabled due to policy”</td></tr>
+<tr><td><code>wifi_set_config</code> (writes)</td><td>PermissionDenied reported on a Gen 2 router, so Perigee treats that router as view-only</td></tr></table>
 <p>Perigee probes capabilities at connect time and shows them under <i>Diagnose → What this connection allows</i>. A denial doesn't tell us what credentials would unlock it, so the app doesn't claim to know.</p>
+
+<div class="callout warn"><b>Refused writes.</b> When a device answers a configuration change with PermissionDenied, <code>StarlinkSession</code> records it, disables further attempts for that device until you tap “Try again” or reconnect, and the UI switches to view-only with a shareable recommended-settings plan. The authentication methods are on the never-allowed list, so there is deliberately no path around the refusal.</div>
 
 <h2 id="tests">Testing</h2>
 <p>The kit ships 40+ tests: single-field/flag construction for every setting, revert and stale-value logic against an in-memory mock router, the safety gate (including every forbidden method), fixture decoding, stall analysis, and SGP4 against Vallado's reference vectors. No test ever talks to real hardware. <code>perigee-probe</code> is a read-only CLI that decodes every read endpoint from a live router and proves the write gate is closed.</p>

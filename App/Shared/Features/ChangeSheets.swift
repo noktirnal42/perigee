@@ -29,7 +29,9 @@ struct ChangeConfirmation: View {
             Text("Perigee sends only this one field, then re-reads the router to confirm it took. You can revert in one tap.")
                 .font(.caption).foregroundStyle(.secondary)
 
-            if !session.writesEnabled {
+            if session.routerWritesRefused {
+                WritesRefusedNote(device: .router)
+            } else if !session.writesEnabled {
                 Label("Turn on “Enable writes” in the Tune tab first.", systemImage: "lock.fill").font(.subheadline).foregroundStyle(.secondary)
             } else if state == .applying {
                 HStack { ProgressView(); Text("Applying — the router may restart Wi-Fi…").font(.subheadline) }
@@ -242,7 +244,8 @@ struct PresetSheet: View {
                 Text("Each step is a separate, verified, single-field write. If one fails the rest are skipped and you can revert the finished ones.")
                     .font(.caption).foregroundStyle(.secondary)
 
-                if !session.writesEnabled { Label("Turn on “Enable writes” in the Tune tab first.", systemImage: "lock.fill").foregroundStyle(.secondary) }
+                if session.routerWritesRefused { WritesRefusedNote(device: .router) }
+                else if !session.writesEnabled { Label("Turn on “Enable writes” in the Tune tab first.", systemImage: "lock.fill").foregroundStyle(.secondary) }
                 else if running { HStack { ProgressView(); Text("Applying \(done.count + 1) of \(plan.count)…") } }
                 else if !plan.isEmpty && done.count < plan.count {
                     SlideToConfirm(label: "Slide to apply \(plan.count) change\(plan.count == 1 ? "" : "s")", tint: Theme.ember) { await run() }
@@ -291,5 +294,65 @@ private extension WifiSetting {
         case .trafficControl: return t.traffic.label
         default: return "—"
         }
+    }
+}
+
+
+/// Shown wherever a change would be applied once a device has answered a configuration write with PermissionDenied.
+struct WritesRefusedNote: View {
+    @Environment(StarlinkSession.self) private var session
+    let device: DeviceKind
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("\(device == .router ? "Your router" : "Your dish") refused changes from this network", systemImage: "hand.raised.fill")
+                .font(.subheadline.weight(.semibold)).foregroundStyle(Theme.warn)
+            Text("It answered PermissionDenied. Settings are view-only here; Perigee won't keep trying.").font(.footnote).foregroundStyle(.secondary)
+            Button("Try again") { session.clearWriteRefusals() }.buttonStyle(.bordered).controlSize(.small).tint(.white)
+        }
+    }
+}
+
+/// Explains the situation in full on the Tune / Dish screens and offers a plan to use elsewhere.
+struct WritesRefusedCard: View {
+    @Environment(StarlinkSession.self) private var session
+    let device: DeviceKind
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                Image(systemName: "hand.raised.fill").font(.title3).foregroundStyle(Theme.warn)
+                Text(device == .router ? "Router settings are view-only from here" : "Dish settings are view-only from here").font(.headline)
+            }
+            Text("\(device == .router ? "The router" : "The dish") answered a change with PermissionDenied. Starlink's local API lets Perigee read everything, but configuration writes most likely require Starlink account authentication, which Perigee deliberately never uses or bypasses.")
+                .font(.subheadline).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("WHAT STILL WORKS").eyebrow()
+                Label("Live status, radio health, graphs and the obstruction map", systemImage: "checkmark.circle.fill").font(.footnote)
+                Label("Stall tester with A/B comparison (it measures; it never writes)", systemImage: "checkmark.circle.fill").font(.footnote)
+                Label("Recommendations you can apply another way", systemImage: "checkmark.circle.fill").font(.footnote)
+            }.foregroundStyle(Theme.good)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("WAYS TO ACT ON WHAT YOU FIND").eyebrow()
+                Text("• Put the console on Ethernet. It removes the Wi-Fi hop entirely.\n• In Starlink's own app, use the options it exposes (restart, bypass mode) and put your own router behind the dish: one with CAKE/SQM and channel control fixes both stalls and bufferbloat.\n• Use the plan below with your own router or when talking to support.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            ShareLink(item: plan, subject: Text("Perigee recommended settings")) { Label("Share recommended settings", systemImage: "square.and.arrow.up") }
+                .buttonStyle(.bordered).tint(Theme.ember)
+            Button("Try a change again") { session.clearWriteRefusals() }.font(.footnote).buttonStyle(.plain).foregroundStyle(.secondary)
+        }
+        .padding(16).frame(maxWidth: .infinity, alignment: .leading).card(tint: Theme.warn)
+    }
+
+    /// Plain-text plan built from the same recommendations the app shows, for use on another router.
+    private var plan: String {
+        guard let t = session.tuning else { return "Perigee has no router configuration to base a plan on yet." }
+        var s = "RECOMMENDED SETTINGS FOR LOW-LATENCY GAMING (from Perigee)\n\n"
+        let steps = TuningPreset.gaming.plan(from: t, shapingMbps: nil)
+        if steps.isEmpty { s += "Your 5 GHz settings already match the gaming preset.\n" }
+        for st in steps { s += "- \(st.title): \(st.displayValue)\n" }
+        let recs = Advisor.channelAdvice(tuning: t, airtime5: session.routerStatus?.airtime5, radio5: session.radios.first { $0.band == .ghz5 })
+        if !recs.isEmpty { s += "\nOBSERVATIONS\n"; for r in recs { s += "- \(r.title): \(r.detail)\n" } }
+        s += "\nAlso consider: wired Ethernet for the console, and a router with CAKE/SQM set to ~90% of your line speed.\n"
+        return s
     }
 }

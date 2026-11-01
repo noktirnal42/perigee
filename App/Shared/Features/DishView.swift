@@ -11,6 +11,7 @@ struct DishContent: View {
     var body: some View {
         VStack(spacing: Theme.spacing) {
             hero
+            if session.dishWritesRefused { WritesRefusedCard(device: .dish) }
             tiles
             obstruction
             history

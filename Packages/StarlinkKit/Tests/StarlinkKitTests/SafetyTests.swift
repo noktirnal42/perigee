@@ -97,3 +97,26 @@ struct SafetyTests {
         try await DestructiveConfirmation.run { try await svc.setStowed(true) }
     }
 }
+
+@Suite("Refused writes")
+struct RefusedWriteTests {
+    @Test("A router that refuses wifi_set_config surfaces a write refusal and is remembered")
+    func writeRefusal() async throws {
+        let mock = MockRouterTransport(denied: ["wifiSetConfig"])
+        let svc = RouterService(transport: GuardedRouterTransport(base: mock, gate: WriteGate(writesEnabled: true)), sleep: { _ in })
+        do { _ = try await svc.apply(.dfs(false)); Issue.record("expected a refusal") }
+        catch let e as DeviceError {
+            #expect(e.isWriteRefusal)
+            #expect(e.localizedDescription.contains("view-only"))
+        }
+        #expect(svc.capabilities.state("wifi_set_config") == .denied)
+        #expect(mock.requestLog.filter { $0 == "wifiSetConfig" }.count == 1, "no retry after a refusal")
+    }
+
+    @Test("A refused read is not a write refusal")
+    func readRefusalIsNotWrite() {
+        #expect(!DeviceError.permissionDenied(method: "wifiGetChannels").isWriteRefusal)
+        #expect(DeviceError.permissionDenied(method: "wifiSetConfig").isWriteRefusal)
+        #expect(DeviceError.permissionDenied(method: "dish_set_config").isWriteRefusal)
+    }
+}

@@ -14,7 +14,10 @@ public enum DeviceError: Error, Sendable, Equatable, LocalizedError {
 
     public var errorDescription: String? {
         switch self {
-        case .permissionDenied(let m): "The device refused “\(m)” from the local network (PermissionDenied)."
+        case .permissionDenied(let m):
+            isWriteRefusal
+            ? "The router refused this change from the local network (PermissionDenied on “\(m)”). It most likely requires Starlink account authentication, which Perigee deliberately never uses, so settings are view-only here."
+            : "The device refused “\(m)” from the local network (PermissionDenied)."
         case .unreachable(let why): "Can't reach the device. \(why)"
         case .timeout: "The device took too long to answer."
         case .authRequired: "This needs authentication that isn't available over the LAN."
@@ -26,6 +29,14 @@ public enum DeviceError: Error, Sendable, Equatable, LocalizedError {
     }
 
     public var isPermissionDenied: Bool { if case .permissionDenied = self { true } else { false } }
+
+    /// PermissionDenied on a method that changes configuration (as opposed to a refused read).
+    public var isWriteRefusal: Bool {
+        guard case .permissionDenied(let m) = self else { return false }
+        let camel = MethodPolicy.classify(m)
+        if camel == .write || camel == .destructive { return true }
+        return ["wifi_set_config", "wifi_set_client_given_name", "dish_set_config", "reboot", "dish_stow"].contains(m)
+    }
 
     static func map(_ error: any Error, method: String) -> DeviceError {
         if let d = error as? DeviceError { return d }

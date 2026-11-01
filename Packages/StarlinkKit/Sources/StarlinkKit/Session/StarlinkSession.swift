@@ -74,6 +74,9 @@ public final class StarlinkSession {
     public private(set) var routerReachable = false
     public private(set) var dishReachable = false
     public private(set) var lastError: String?
+    /// Set when a device answered a configuration change with PermissionDenied. Settings then become view-only until reconnect.
+    public private(set) var routerWritesRefused = false
+    public private(set) var dishWritesRefused = false
 
     public let gate = WriteGate()
     public let results: ResultsStore
@@ -83,12 +86,17 @@ public final class StarlinkSession {
     private var pollTask: Task<Void, Never>?
     private var tickCount = 0
     private let injectedSource: DataSource?
+    private let demoRefusesWrites: Bool
 
-    public init(source: DataSource = .live, results: ResultsStore = ResultsStore()) {
+    /// - Parameter demoRefusesWrites: Demo mode only: behave like a router that answers every change with PermissionDenied
+    ///   (what real Starlink routers do over the LAN), so that state can be previewed and tested.
+    public init(source: DataSource = .live, results: ResultsStore = ResultsStore(), demoRefusesWrites: Bool = false) {
         self.results = results
         self.injectedSource = source
         self.source = source
+        self.demoRefusesWrites = demoRefusesWrites
         build()
+        if demoRefusesWrites && source == .demo { routerWritesRefused = true }
     }
 
     // MARK: Lifecycle
@@ -96,7 +104,9 @@ public final class StarlinkSession {
     private func build() {
         switch source {
         case .demo:
-            router = RouterService(transport: GuardedRouterTransport(base: MockRouterTransport(latency: .milliseconds(120)), gate: gate),
+            var denied: Set<String> = ["wifiGetChannels", "wifiGetPingMetrics", "wifiGetTracerouteStatus", "wifiStartTraceroute"]
+            if demoRefusesWrites { denied.formUnion(["wifiSetConfig", "wifiSetClientGivenName"]) }
+            router = RouterService(transport: GuardedRouterTransport(base: MockRouterTransport(denied: denied, latency: .milliseconds(120)), gate: gate),
                                    sleep: { _ in })
             dish = DishService(transport: GuardedDishTransport(base: MockDishTransport(), gate: gate))
         case .live:
@@ -127,6 +137,7 @@ public final class StarlinkSession {
         link = .connecting; routerStatus = nil; dishStatus = nil; clients = []; radios = []; tuning = nil
         routerHistory = nil; dishHistory = nil; obstruction = nil; dishSettings = nil; capabilities = []
         recentPing = []; routerReachable = false; dishReachable = false; tickCount = 0
+        routerWritesRefused = false; dishWritesRefused = false
         changeLog = []; lastError = nil; lastUpdated = nil; writesEnabled = false
     }
 
@@ -227,7 +238,9 @@ public final class StarlinkSession {
 
     public func apply(_ setting: WifiSetting, expected: WifiSetting? = nil) async throws -> ChangeRecord {
         guard let router else { throw DeviceError.unreachable("Not connected.") }
-        let r = try await router.apply(setting, expected: expected)
+        let r: WifiChangeResult
+        do { r = try await router.apply(setting, expected: expected) }
+        catch let e as DeviceError where e.isWriteRefusal { routerWritesRefused = true; syncCapabilityStates(); throw e }
         tuning = r.tuning
         let rec = ChangeRecord(date: r.date, title: setting.title, from: r.previous.displayValue, to: setting.displayValue,
                                verified: r.verified, revert: .wifi(r.previous), applied: .wifi(r.applied))
@@ -237,7 +250,9 @@ public final class StarlinkSession {
 
     public func apply(_ setting: DishSetting) async throws -> ChangeRecord {
         guard let dish else { throw DeviceError.unreachable("Not connected.") }
-        let r = try await dish.apply(setting)
+        let r: DishChangeResult
+        do { r = try await dish.apply(setting) }
+        catch let e as DeviceError where e.isWriteRefusal { dishWritesRefused = true; syncCapabilityStates(); throw e }
         dishSettings = r.settings
         let rec = ChangeRecord(date: Date(), title: setting.title, from: r.previous.displayValue, to: setting.displayValue,
                                verified: r.verified, revert: .dish(r.previous), applied: .dish(setting))
@@ -262,9 +277,22 @@ public final class StarlinkSession {
         return result
     }
 
+    /// Lets the user try again after a refusal (e.g. after the firmware or their account situation changed).
+    public func clearWriteRefusals() { routerWritesRefused = false; dishWritesRefused = false }
+
+    private func syncCapabilityStates() {
+        capabilities = capabilities.map { c in
+            var c = c
+            let book = c.device == .router ? router?.capabilities : dish?.capabilities
+            if let s = book?.state(c.method), s != .unknown { c.state = s }
+            return c
+        }
+    }
+
     public func rename(_ client: NetworkClient, to name: String) async throws {
         guard let router else { throw DeviceError.unreachable("Not connected.") }
-        try await router.rename(client: client, to: name)
+        do { try await router.rename(client: client, to: name) }
+        catch let e as DeviceError where e.isWriteRefusal { routerWritesRefused = true; syncCapabilityStates(); throw e }
         if let c = await capture({ try await router.clients() }).successValue { clients = c }
     }
 

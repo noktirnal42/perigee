@@ -7,7 +7,8 @@ struct PerigeeApp: App {
 
     /// `-demo` launches against the built-in sample network (used for screenshots and previews).
     private static func makeSession() -> StarlinkSession {
-        StarlinkSession(source: CommandLine.arguments.contains("-demo") ? .demo : .live)
+        StarlinkSession(source: CommandLine.arguments.contains("-demo") ? .demo : .live,
+                        demoRefusesWrites: CommandLine.arguments.contains("-refuse-writes"))
     }
 
     var body: some Scene {

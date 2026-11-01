@@ -17,16 +17,20 @@ public struct Capability: Sendable, Equatable, Codable, Identifiable {
     public var detail: String        // what the app uses it for
     public var state: CapabilityState
     public var device: DeviceKind
-    public init(method: String, title: String, detail: String, state: CapabilityState = .unknown, device: DeviceKind) {
-        self.method = method; self.title = title; self.detail = detail; self.state = state; self.device = device
+    /// Writes are never probed (that would change the device); their state only becomes known when the user tries one.
+    public var isWrite: Bool
+    public init(method: String, title: String, detail: String, state: CapabilityState = .unknown, device: DeviceKind, isWrite: Bool = false) {
+        self.method = method; self.title = title; self.detail = detail; self.state = state; self.device = device; self.isWrite = isWrite
     }
 
     /// Plain-language reason shown when a feature is greyed out.
     public var explanation: String {
         switch state {
-        case .unknown: "Not checked yet."
+        case .unknown: isWrite ? "Not tested: Perigee never sends a change just to see if it's allowed." : "Not checked yet."
         case .available: "Available."
-        case .denied: "The device denied this request on the local network. The required authorization is unknown."
+        case .denied: isWrite
+            ? "The device refused this change from the local network. It likely needs Starlink account authentication, which Perigee doesn't use."
+            : "The device denied this request on the local network. The required authorization is unknown."
         case .unsupported: "This firmware doesn't implement it."
         case .failed(let s): "Failed: \(s)"
         }
@@ -69,12 +73,15 @@ public enum KnownCapabilities {
         .init(method: "get_speedtest_status", title: "Speed test", detail: "Status of the router's speed test.", device: .router),
         .init(method: "wifi_get_traceroute_status", title: "Traceroute", detail: "Router-side traceroute results.", device: .router),
         .init(method: "get_log", title: "System log", detail: "Router syslog viewer.", device: .router),
+        .init(method: "wifi_set_config", title: "Change Wi-Fi settings", detail: "Channel, width, DFS, CAKE, DNS… (the Tune tab).", device: .router, isWrite: true),
+        .init(method: "wifi_set_client_given_name", title: "Rename devices", detail: "Give a device a friendly name.", device: .router, isWrite: true),
     ]
     public static let dish: [Capability] = [
         .init(method: "get_status", title: "Dish status", detail: "Throughput, ping, obstruction, alignment, alerts.", device: .dish),
         .init(method: "dish_get_config", title: "Dish configuration", detail: "Snow melt, sleep schedule, update window.", device: .dish),
         .init(method: "dish_get_obstruction_map", title: "Obstruction map", detail: "Sky view of blocked sectors.", device: .dish),
         .init(method: "get_history", title: "Dish history", detail: "15-minute ping, throughput and outage history.", device: .dish),
+        .init(method: "dish_set_config", title: "Change dish settings", detail: "Snow melt, sleep schedule, update window.", device: .dish, isWrite: true),
         .init(method: "get_location", title: "Dish GPS location", detail: "Where the dish is. Disabled by policy over the LAN, so Perigee asks for your location instead.", device: .dish),
     ]
 }
