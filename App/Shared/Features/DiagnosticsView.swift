@@ -25,6 +25,9 @@ final class StallRunner {
                 let r = StallAnalysis.analyze(rtt: rtt, interval: iv, target: host, label: label.isEmpty ? "Run" : label, settings: snapshot)
                 result = r
                 await session.results.add(r)
+                await session.history.addAnnotation(.init(
+                    kind: .stallTest, title: label.isEmpty ? "Stall test" : label,
+                    detail: "\(r.episodes) stalls · \(String(format: "%.1f", r.lossPercent))% loss · p95 \(Int(r.p95Ms)) ms"))
                 Haptics.success()
             } catch { self.error = error.localizedDescription }
             running = false

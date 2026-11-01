@@ -80,21 +80,27 @@ public final class StarlinkSession {
 
     public let gate = WriteGate()
     public let results: ResultsStore
+    public private(set) var history: HistoryStore
 
     private var router: RouterService?
     private var dish: DishService?
     private var pollTask: Task<Void, Never>?
     private var tickCount = 0
     private let injectedSource: DataSource?
+    private let injectedHistory: HistoryStore?
     private let demoRefusesWrites: Bool
 
     /// - Parameter demoRefusesWrites: Demo mode only: behave like a router that answers every change with PermissionDenied
     ///   (what real Starlink routers do over the LAN), so that state can be previewed and tested.
-    public init(source: DataSource = .live, results: ResultsStore = ResultsStore(), demoRefusesWrites: Bool = false) {
+    /// - Parameter history: Pass a specific store (e.g. for tests); otherwise one is chosen based on `source`.
+    public init(source: DataSource = .live, results: ResultsStore = ResultsStore(), demoRefusesWrites: Bool = false,
+                history: HistoryStore? = nil) {
         self.results = results
         self.injectedSource = source
         self.source = source
         self.demoRefusesWrites = demoRefusesWrites
+        self.injectedHistory = history
+        self.history = history ?? HistoryStore.makeDefault(for: source)
         build()
         if demoRefusesWrites && source == .demo { routerWritesRefused = true }
     }
@@ -125,6 +131,7 @@ public final class StarlinkSession {
         stop()
         source = s
         reset()
+        if injectedHistory == nil { history = HistoryStore.makeDefault(for: s) }
         build()
         start()
     }
@@ -200,6 +207,15 @@ public final class StarlinkSession {
             capabilities = rc + dc
         }
         if routerReachable || dishReachable { lastUpdated = Date() }
+
+        await history.record(HistorySample(
+            routerReachable: routerReachable, dishReachable: dishReachable,
+            internetPingMs: routerStatus?.internetPingMs, pingDropRate: routerStatus?.pingDropRate,
+            obstructionFraction: dishStatus?.obstructionFraction,
+            frameErrorRate5: radios.first(where: { $0.band == .ghz5 })?.frameErrorRate,
+            frameErrorRate2: radios.first(where: { $0.band == .ghz2 })?.frameErrorRate,
+            clientCount: routerReachable ? clients.count : nil
+        ))
     }
 
     private func updateLink(routerError: DeviceError?, dishError: DeviceError?) {
@@ -240,11 +256,16 @@ public final class StarlinkSession {
         guard let router else { throw DeviceError.unreachable("Not connected.") }
         let r: WifiChangeResult
         do { r = try await router.apply(setting, expected: expected) }
-        catch let e as DeviceError where e.isWriteRefusal { routerWritesRefused = true; syncCapabilityStates(); throw e }
+        catch let e as DeviceError where e.isWriteRefusal {
+            routerWritesRefused = true; syncCapabilityStates()
+            await history.addAnnotation(.init(kind: .writeRefused, title: "\(setting.title) refused", detail: e.localizedDescription))
+            throw e
+        }
         tuning = r.tuning
         let rec = ChangeRecord(date: r.date, title: setting.title, from: r.previous.displayValue, to: setting.displayValue,
                                verified: r.verified, revert: .wifi(r.previous), applied: .wifi(r.applied))
         changeLog.insert(rec, at: 0)
+        await history.addAnnotation(.init(kind: .tuningChange, title: rec.title, detail: "\(rec.from) → \(rec.to)"))
         return rec
     }
 
@@ -252,11 +273,16 @@ public final class StarlinkSession {
         guard let dish else { throw DeviceError.unreachable("Not connected.") }
         let r: DishChangeResult
         do { r = try await dish.apply(setting) }
-        catch let e as DeviceError where e.isWriteRefusal { dishWritesRefused = true; syncCapabilityStates(); throw e }
+        catch let e as DeviceError where e.isWriteRefusal {
+            dishWritesRefused = true; syncCapabilityStates()
+            await history.addAnnotation(.init(kind: .writeRefused, title: "\(setting.title) refused", detail: e.localizedDescription))
+            throw e
+        }
         dishSettings = r.settings
         let rec = ChangeRecord(date: Date(), title: setting.title, from: r.previous.displayValue, to: setting.displayValue,
                                verified: r.verified, revert: .dish(r.previous), applied: .dish(setting))
         changeLog.insert(rec, at: 0)
+        await history.addAnnotation(.init(kind: .dishChange, title: rec.title, detail: "\(rec.from) → \(rec.to)"))
         return rec
     }
 

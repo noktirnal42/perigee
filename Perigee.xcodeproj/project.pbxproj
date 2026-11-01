@@ -15,6 +15,7 @@
 		15E3CDC80B707484CF1F5C38 /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DBDE0B0BBA7E85C7A33FE /* Biometrics.swift */; };
 		1B9B37A614D10FA3C4F887AE /* MenuBarStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981BD4B7896BFFB40A086CB0 /* MenuBarStatus.swift */; };
 		1E1DDB38065F898CF386232F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB30E922114F342D2411DC1 /* Theme.swift */; };
+		1F69C4C1B219013E4416A72A /* TrendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66257B2995451A4E4243BECA /* TrendsView.swift */; };
 		2400C55CF2F5C2A73D795E06 /* StarlinkKit in Frameworks */ = {isa = PBXBuildFile; productRef = 495EC9BEE76909DC57461249 /* StarlinkKit */; };
 		2C0358F500590B873CD4128D /* NetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8141B778034F6ABBF2B2657E /* NetworkView.swift */; };
 		2F860FB8BBE754013E3D1E79 /* SkyChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E05A03C03C518D9221F1DA42 /* SkyChartView.swift */; };
@@ -39,6 +40,7 @@
 		B2C92004278F3A5B9A3577CF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBFD4BFEDD5CD89E378ADA8 /* SettingsView.swift */; };
 		B5A6C2C400F45FC91AF6FF09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F526601528B0621DF089231C /* Assets.xcassets */; };
 		BEC0ECA6CA817DA2CB8EE703 /* SlideToConfirm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197114BF1B5A7F5D4636950D /* SlideToConfirm.swift */; };
+		C5B4F12C71F0FECC786E2C73 /* TrendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66257B2995451A4E4243BECA /* TrendsView.swift */; };
 		C6BA5476F2F1E3E1D6B8F971 /* Surfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483E163A51FA06417BB0AFF /* Surfaces.swift */; };
 		C8433C9C6955D91BB89FE937 /* SkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C46F2E43AAC89C7F21C67 /* SkyView.swift */; };
 		C98DFA5736B967D20CECC4D1 /* SkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C46F2E43AAC89C7F21C67 /* SkyView.swift */; };
@@ -68,6 +70,7 @@
 		3FEEA74B49A2CA653F19C821 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		51ABEB5F525D699C4EF3A954 /* Perigee_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Perigee_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52BE2ABDFA9DD1F4AD9ABDAD /* PerigeeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerigeeApp.swift; sourceTree = "<group>"; };
+		66257B2995451A4E4243BECA /* TrendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendsView.swift; sourceTree = "<group>"; };
 		732E1480F60928A626AA3D46 /* StarlinkKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StarlinkKit; path = Packages/StarlinkKit; sourceTree = SOURCE_ROOT; };
 		7AB30E922114F342D2411DC1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		7BC72D8CDD0A4B8D0F5D6758 /* Charts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Charts.swift; sourceTree = "<group>"; };
@@ -224,6 +227,7 @@
 				8141B778034F6ABBF2B2657E /* NetworkView.swift */,
 				86DAB61B9CE498E6DBDC56AC /* RootView.swift */,
 				1EBFD4BFEDD5CD89E378ADA8 /* SettingsView.swift */,
+				66257B2995451A4E4243BECA /* TrendsView.swift */,
 				1E2A3C0E0171EFB4B0A2FA43 /* TuneView.swift */,
 				D9C4B4131A0ABAFEB04F50D7 /* Sky */,
 			);
@@ -361,6 +365,7 @@
 				BEC0ECA6CA817DA2CB8EE703 /* SlideToConfirm.swift in Sources */,
 				65FB16E7A437CE60D74D172A /* Surfaces.swift in Sources */,
 				1E1DDB38065F898CF386232F /* Theme.swift in Sources */,
+				C5B4F12C71F0FECC786E2C73 /* TrendsView.swift in Sources */,
 				D666198CA9069E9F77214353 /* TuneView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,6 +394,7 @@
 				F5DD87621A6CECCA13694DB5 /* SlideToConfirm.swift in Sources */,
 				C6BA5476F2F1E3E1D6B8F971 /* Surfaces.swift in Sources */,
 				9807CD5BC66FEAF0BC76A173 /* Theme.swift in Sources */,
+				1F69C4C1B219013E4416A72A /* TrendsView.swift in Sources */,
 				30EE72F50257380F7C10D377 /* TuneView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

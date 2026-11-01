@@ -109,7 +109,7 @@ Every v1 guarantee carries forward exactly as-is: read-only by default, single-f
 
 | Phase | Scope | Why this order |
 |---|---|---|
-| 1 | History engine + trend charts + timeline annotations | Everything else (alerts, forecast, weekly recap) needs data to act on |
+| 1 ✅ *(shipped)* | History engine + trend charts + timeline annotations | Everything else (alerts, forecast, weekly recap) needs data to act on |
 | 2 | Alerts/automation + weekly recap | Highest user-visible "it told me before I noticed" value |
 | 3 | Widgets, Live Activity, Shortcuts/App Intents, watchOS | High visibility, mostly additive UI work once History exists |
 | 4 | Multi-site/fleet + CloudKit sync | Needed before data model gets harder to migrate later |

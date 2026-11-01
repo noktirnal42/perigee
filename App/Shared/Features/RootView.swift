@@ -2,12 +2,19 @@ import SwiftUI
 import StarlinkKit
 
 enum AppSection: String, CaseIterable, Identifiable, Hashable {
-    case home, network, tune, dish, diagnostics
+    case home, network, tune, dish, diagnostics, trends
     var id: String { rawValue }
-    var title: String { switch self { case .home: "Home"; case .network: "Network"; case .tune: "Tune"; case .dish: "Dish"; case .diagnostics: "Diagnose" } }
+    var title: String {
+        switch self {
+        case .home: "Home"; case .network: "Network"; case .tune: "Tune"; case .dish: "Dish"
+        case .diagnostics: "Diagnose"; case .trends: "Trends"
+        }
+    }
     var symbol: String {
         switch self {
-        case .home: "house.fill"; case .network: "wifi"; case .tune: "slider.horizontal.3"; case .dish: "antenna.radiowaves.left.and.right"; case .diagnostics: "waveform.path.ecg"
+        case .home: "house.fill"; case .network: "wifi"; case .tune: "slider.horizontal.3"
+        case .dish: "antenna.radiowaves.left.and.right"; case .diagnostics: "waveform.path.ecg"
+        case .trends: "chart.xyaxis.line"
         }
     }
 }
@@ -60,6 +67,7 @@ struct RootView: View {
         case .tune: TuneView()
         case .dish: DishHub()
         case .diagnostics: DiagnosticsView()
+        case .trends: TrendsView()
         }
     }
 }
