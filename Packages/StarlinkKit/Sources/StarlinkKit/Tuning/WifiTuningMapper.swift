@@ -1,21 +1,24 @@
 import Foundation
 import RouterAPI
+import SwiftProtobuf
 
 enum WifiTuningMapper {
     static func trafficControl(_ c: WifiConfig) -> TrafficControl {
         switch c.wanTrafficControl {
-        case .wanNoTrafficControl: .none
+        case .wanNoTrafficControl(let n):
+            n.unknownFields.data.isEmpty ? .none : .opaque(.none, try? n.serializedData())
         case .wanAckSuppression(let a):
-            .ackSuppression(AckSuppressionParams(
+            !a.unknownFields.data.isEmpty ? .opaque(.ackSuppression, try? a.serializedData()) : .ackSuppression(AckSuppressionParams(
                 htbAckQueueRate: Double(a.htbAckQueueRate), htbAckQueueCeil: Double(a.htbAckQueueCeil),
                 cakeQueueBandwidth: Double(a.cakeQueueBandwidth), cakeAckFilterAggressive: a.cakeAckFilterAggressive,
-                cakeManualRttMs: Double(a.cakeManualRtt)))
+                cakeManualRttMs: Double(a.cakeManualRtt), ackMark: a.ackMark))
         case .wanCakeRateLimit(let k):
-            .cake(CakeParams(
-                bandwidthMbps: Double(k.bandwidth),
+            (!k.unknownFields.data.isEmpty || CakeParams.Priority(rawValue: k.priorityQueueParameter.rawValue) == nil || CakeParams.AckFilter(rawValue: k.ackFilter.rawValue) == nil)
+            ? .opaque(.cake, try? k.serializedData()) : .cake(CakeParams(
+                bandwidth: Double(k.bandwidth),
                 priority: CakeParams.Priority(rawValue: k.priorityQueueParameter.rawValue) ?? .diffserv3,
                 ackFilter: CakeParams.AckFilter(rawValue: k.ackFilter.rawValue) ?? .off,
-                manualRttMs: Double(k.manualRtt)))
+                manualRtt: Double(k.manualRtt), hostMark: k.hostMark))
         case nil: .unset
         }
     }

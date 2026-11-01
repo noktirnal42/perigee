@@ -7,3 +7,9 @@ xcuserdata/
 *.xcuserstate
 Packages/StarlinkKit/.build/
 .claude/
+
+.build-app/
+.attic/
+.codex/
+.build-app/
+.build-*/

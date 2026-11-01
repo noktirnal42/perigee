@@ -32,7 +32,7 @@ struct WifiWriteTests {
             (.outdoorMode(true), ["outdoorMode", "applyOutdoorMode"]),
             (.customPowerTable(true), ["customPowerTable", "applyCustomPowerTable"]),
             (.dscpMark(46), ["wanHostDscpMark", "applyWanHostDscpMark"]),
-            (.trafficControl(.cake(CakeParams(bandwidthMbps: 90))), ["wanCakeRateLimit", "applyWanTrafficControl"]),
+            (.trafficControl(.cake(CakeParams(bandwidth: 90))), ["wanCakeRateLimit", "applyWanTrafficControl"]),
             (.trafficControl(.none), ["wanNoTrafficControl", "applyWanTrafficControl"]),
           ])
     func oneFieldOneFlag(setting: WifiSetting, expected: [String]) throws {
@@ -55,7 +55,7 @@ struct WifiWriteTests {
         #expect(throws: WifiSettingError.self) { try WifiSetting.dscpMark(99).makeConfig(base: base) }
         #expect(throws: WifiSettingError.self) { try WifiSetting.channel(.ghz5, 9999).makeConfig(base: base) }
         #expect(throws: WifiSettingError.self) { try WifiSetting.vhtBandwidth(.ghz2, .mhz80).makeConfig(base: base) }
-        #expect(throws: WifiSettingError.self) { try WifiSetting.trafficControl(.cake(.init(bandwidthMbps: 0))).makeConfig(base: base) }
+        #expect(throws: WifiSettingError.self) { try WifiSetting.trafficControl(.cake(.init(bandwidth: 0))).makeConfig(base: base) }
         #expect(throws: WifiSettingError.self) { try WifiSetting.trafficControl(.unset).makeConfig(base: base) }
     }
 
@@ -78,26 +78,25 @@ struct WifiWriteTests {
         #expect(mock.patches.count == 2)
     }
 
-    @Test("Unset traffic control reverts to Off, never to an unwritable state")
-    func trafficRevert() async throws {
+    @Test("An unset traffic control is reported as not restorable, and writing it back is refused")
+    func trafficUnsetNotRestorable() async throws {
         let mock = MockRouterTransport()
         var cfg = mock.currentConfig
         cfg.wanTrafficControl = nil
         mock.setConfig(cfg)
         let svc = RouterService(transport: GuardedRouterTransport(base: mock, gate: WriteGate(writesEnabled: true)), sleep: { _ in })
-        let r = try await svc.apply(.trafficControl(.cake(CakeParams(bandwidthMbps: 100, priority: .diffserv4, ackFilter: .on))))
+        let r = try await svc.apply(.trafficControl(.cake(CakeParams(bandwidth: 100, priority: .diffserv4, ackFilter: .on))))
         #expect(r.verified)
-        #expect(r.previous == .trafficControl(.none))
-        let revert = try await svc.apply(r.previous)
-        #expect(revert.verified)
-        #expect(mock.currentConfig.wanNoTrafficControl == SpaceX_API_Device_NoTrafficControl())
+        #expect(r.previous == .trafficControl(.unset))
+        #expect(!r.previous.canRestore, "the UI must not offer a one-tap revert to an unwritable state")
+        await #expect(throws: WifiSettingError.self) { _ = try await svc.apply(r.previous) }
     }
 
     @Test("Ack-suppression round trip keeps its parameters for revert")
     func ackRoundTrip() async throws {
         let mock = MockRouterTransport()
         let svc = RouterService(transport: GuardedRouterTransport(base: mock, gate: WriteGate(writesEnabled: true)), sleep: { _ in })
-        let r = try await svc.apply(.trafficControl(.cake(CakeParams(bandwidthMbps: 80))))
+        let r = try await svc.apply(.trafficControl(.cake(CakeParams(bandwidth: 80))))
         guard case .trafficControl(.ackSuppression(let a)) = r.previous else { Issue.record("previous should be ack suppression"); return }
         #expect(a.cakeAckFilterAggressive)
         _ = try await svc.apply(r.previous)
@@ -123,4 +122,38 @@ struct WifiWriteTests {
         #expect(after?.displayName == "Xbox Series X")
         #expect(mock.requestLog.filter { $0 == "wifiSetClientGivenName" }.count == 1)
     }
+    @Test("A stale reviewed value cannot overwrite a newer setting")
+    func staleReviewIsRejected() async throws {
+        let mock = MockRouterTransport()
+        var config = mock.currentConfig
+        config.channel5Ghz = 44
+        mock.setConfig(config)
+        let svc = RouterService(transport: GuardedRouterTransport(base: mock, gate: WriteGate(writesEnabled: true)), sleep: { _ in })
+        await #expect(throws: WifiSettingError.self) {
+            _ = try await svc.apply(.channel(.ghz5, 149), expected: .channel(.ghz5, 0))
+        }
+        #expect(mock.writeCount == 0)
+        #expect(mock.currentConfig.channel5Ghz == 44)
+    }
+
+    @Test("A matching reviewed value permits the patch")
+    func reviewedValueMatches() async throws {
+        let mock = MockRouterTransport()
+        let svc = RouterService(transport: GuardedRouterTransport(base: mock, gate: WriteGate(writesEnabled: true)), sleep: { _ in })
+        let result = try await svc.apply(.channel(.ghz5, 149), expected: .channel(.ghz5, 0))
+        #expect(result.verified)
+        #expect(mock.writeCount == 1)
+    }
+
+    @Test("A write with unavailable read-back retains its previous value")
+    func unavailableReadBackKeepsRevert() async throws {
+        let mock = MockRouterTransport()
+        mock.failConfigReadsAfterWrite(with: .permissionDenied(method: "wifi_get_config"))
+        let svc = RouterService(transport: GuardedRouterTransport(base: mock, gate: WriteGate(writesEnabled: true)), sleep: { _ in })
+        let result = try await svc.apply(.channel(.ghz5, 149), expected: .channel(.ghz5, 0))
+        #expect(!result.verified)
+        #expect(result.previous == .channel(.ghz5, 0))
+        #expect(mock.writeCount == 1)
+    }
+
 }

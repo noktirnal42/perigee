@@ -11,7 +11,7 @@ public enum CapabilityState: Sendable, Equatable, Codable {
 }
 
 public struct Capability: Sendable, Equatable, Codable, Identifiable {
-    public var id: String { method }
+    public var id: String { "\(device.rawValue):\(method)" }
     public var method: String        // proto method name, e.g. wifi_get_channels
     public var title: String
     public var detail: String        // what the app uses it for
@@ -26,7 +26,7 @@ public struct Capability: Sendable, Equatable, Codable, Identifiable {
         switch state {
         case .unknown: "Not checked yet."
         case .available: "Available."
-        case .denied: "Starlink only allows this from its own authenticated app, not from the local network."
+        case .denied: "The device denied this request on the local network. The required authorization is unknown."
         case .unsupported: "This firmware doesn't implement it."
         case .failed(let s): "Failed: \(s)"
         }
@@ -75,5 +75,6 @@ public enum KnownCapabilities {
         .init(method: "dish_get_config", title: "Dish configuration", detail: "Snow melt, sleep schedule, update window.", device: .dish),
         .init(method: "dish_get_obstruction_map", title: "Obstruction map", detail: "Sky view of blocked sectors.", device: .dish),
         .init(method: "get_history", title: "Dish history", detail: "15-minute ping, throughput and outage history.", device: .dish),
+        .init(method: "get_location", title: "Dish GPS location", detail: "Where the dish is. Disabled by policy over the LAN, so Perigee asks for your location instead.", device: .dish),
     ]
 }

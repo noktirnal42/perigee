@@ -1,5 +1,6 @@
 import Foundation
 import RouterAPI
+import SwiftProtobuf
 
 typealias WifiConfig = RouterAPI.SpaceX_API_Device_WifiConfig
 
@@ -33,6 +34,14 @@ public enum WifiSetting: Sendable, Equatable {
     case trafficControl(TrafficControl)
     case dscpMark(Int)
     case hiddenSSID(Bool)
+
+    /// Whether this saved value can be written back exactly.
+    public var canRestore: Bool {
+        switch self {
+        case .trafficControl(.unset), .trafficControl(.opaque(_, nil)): false
+        default: true
+        }
+    }
 
     // MARK: Presentation
 
@@ -221,21 +230,31 @@ public enum WifiSetting: Sendable, Equatable {
             switch t {
             case .unset: throw WifiSettingError.unsupported("“Not set” can't be written back; choose Off, Ack suppression or CAKE.")
             case .none: c.wanNoTrafficControl = SpaceX_API_Device_NoTrafficControl()
+            case .opaque(let kind, let data):
+                guard let data else { throw WifiSettingError.unsupported("The original traffic-control setting could not be preserved.") }
+                switch kind {
+                case .none: c.wanNoTrafficControl = try SpaceX_API_Device_NoTrafficControl(serializedBytes: data)
+                case .ackSuppression: c.wanAckSuppression = try SpaceX_API_Device_AckSuppression(serializedBytes: data)
+                case .cake: c.wanCakeRateLimit = try SpaceX_API_Device_CakeRateLimit(serializedBytes: data)
+                }
             case .ackSuppression(let a):
                 var m = SpaceX_API_Device_AckSuppression()
+                m.ackMark = a.ackMark
                 m.htbAckQueueRate = Float(a.htbAckQueueRate); m.htbAckQueueCeil = Float(a.htbAckQueueCeil)
                 m.cakeQueueBandwidth = Float(a.cakeQueueBandwidth); m.cakeAckFilterAggressive = a.cakeAckFilterAggressive
                 m.cakeManualRtt = Float(a.cakeManualRttMs)
                 c.wanAckSuppression = m
             case .cake(let p):
-                guard p.bandwidthMbps >= 1, p.bandwidthMbps <= 10_000 else {
-                    throw WifiSettingError.invalid("CAKE needs a shaping rate between 1 and 10,000 Mbps.")
+                guard p.bandwidth.isFinite, p.bandwidth > 0, Float(p.bandwidth).isFinite,
+                      p.manualRtt.isFinite, p.manualRtt >= 0, Float(p.manualRtt).isFinite else {
+                    throw WifiSettingError.invalid("CAKE values must be finite; bandwidth must be greater than zero.")
                 }
                 var m = SpaceX_API_Device_CakeRateLimit()
-                m.bandwidth = Float(p.bandwidthMbps)
+                m.hostMark = p.hostMark
+                m.bandwidth = Float(p.bandwidth)
                 m.priorityQueueParameter = SpaceX_API_Device_CakePriorityQueueParameter(rawValue: p.priority.rawValue) ?? .diffserv3
                 m.ackFilter = SpaceX_API_Device_CakeAckFilter(rawValue: p.ackFilter.rawValue) ?? .noAckFilter
-                m.manualRtt = Float(p.manualRttMs)
+                m.manualRtt = Float(p.manualRtt)
                 c.wanCakeRateLimit = m
             }
             c.applyWanTrafficControl = true

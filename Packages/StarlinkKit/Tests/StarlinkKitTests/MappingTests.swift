@@ -112,4 +112,17 @@ struct StallAnalysisTests {
         #expect(await reopened.results.count == 1)
         #expect(await reopened.results.first?.label == "one")
     }
+    @Test func corruptHistoryIsNotOverwritten() async throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let file = dir.appendingPathComponent("stall-results.json")
+        let original = Data("not valid json".utf8)
+        try original.write(to: file)
+        let store = ResultsStore(directory: dir)
+        #expect(await store.persistenceError != nil)
+        await store.add(StallAnalysis.analyze(rtt: [1], target: "x", label: "new"))
+        #expect(try Data(contentsOf: file) == original)
+        #expect(await store.persistenceError != nil)
+    }
+
 }

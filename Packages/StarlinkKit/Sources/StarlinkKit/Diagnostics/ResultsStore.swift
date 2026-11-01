@@ -4,14 +4,22 @@ import Foundation
 public actor ResultsStore {
     private let url: URL
     public private(set) var results: [StallResult] = []
+    public private(set) var persistenceError: String?
+    private var blockedByLoadFailure = false
 
     public init(directory: URL? = nil) {
         let dir = directory ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
             .appendingPathComponent("Perigee", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         url = dir.appendingPathComponent("stall-results.json")
-        if let data = try? Data(contentsOf: url), let decoded = try? JSONDecoder.iso.decode([StallResult].self, from: data) {
-            results = decoded
+        if FileManager.default.fileExists(atPath: url.path) {
+            do {
+                let data = try Data(contentsOf: url)
+                results = try JSONDecoder.iso.decode([StallResult].self, from: data)
+            } catch {
+                blockedByLoadFailure = true
+                persistenceError = "Existing results could not be read; the file was left untouched."
+            }
         }
     }
 
@@ -23,7 +31,14 @@ public actor ResultsStore {
     }
 
     private func persist() {
-        if let d = try? JSONEncoder.iso.encode(results) { try? d.write(to: url, options: .atomic) }
+        guard !blockedByLoadFailure else { return }
+        do {
+            let data = try JSONEncoder.iso.encode(results)
+            try data.write(to: url, options: .atomic)
+            persistenceError = nil
+        } catch {
+            persistenceError = error.localizedDescription
+        }
     }
 }
 

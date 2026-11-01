@@ -63,9 +63,8 @@ public actor RouterService {
 
     @discardableResult
     public func wifiTuning() async throws -> WifiTuning {
-        let r = try await send("wifi_get_config") { $0.wifiGetConfig = .init() }
-        rawConfig = r.wifiGetConfig.wifiConfig
-        return WifiTuningMapper.tuning(from: rawConfig)
+        let config = try await wifiTuningRaw()
+        return WifiTuningMapper.tuning(from: config)
     }
 
     /// Wi-Fi password for one SSID. Re-reads the config; never cached in the UI model and never logged.
@@ -158,10 +157,19 @@ public actor RouterService {
     // MARK: Writes (all guarded by WriteGate in the transport)
 
     /// Sets exactly one setting, then re-reads to confirm. The returned `previous` is the revert target.
-    public func apply(_ setting: WifiSetting) async throws -> WifiChangeResult {
+    public func apply(_ setting: WifiSetting, expected: WifiSetting? = nil) async throws -> WifiChangeResult {
         let before = try await wifiTuningRaw()
         let previous = setting.current(in: before)
+        if let expected {
+            guard expected.fieldName == setting.fieldName else {
+                throw WifiSettingError.invalid("The reviewed setting does not match the requested change.")
+            }
+            guard previous == expected else {
+                throw WifiSettingError.invalid("This setting changed since you reviewed it. Refresh and review the new value before applying.")
+            }
+        }
         let patch = try setting.makeConfig(base: before)
+        let canonical = setting.current(in: patch)
         _ = try await send("wifi_set_config") { $0.wifiSetConfig.wifiConfig = patch }
 
         // The router may restart Wi-Fi/WAN services after a write; retry the verification read for a while.
@@ -172,25 +180,26 @@ public actor RouterService {
             do {
                 let after = try await wifiTuningRaw()
                 verifiedTuning = WifiTuningMapper.tuning(from: after)
-                verified = setting.current(in: after) == setting
+                verified = setting.current(in: after) == canonical
+                if verified { break }
+            } catch let error as DeviceError where error.isPermissionDenied {
+                // Retain the revert target even when read-back is no longer permitted.
                 break
-            } catch let e as DeviceError where !e.isPermissionDenied {
+            } catch {
+                // The write was accepted, but a read-back may be temporarily unavailable.
+                // Keep the previous value so callers can offer a recovery action.
                 continue
             }
         }
         let tuning = verifiedTuning ?? WifiTuningMapper.tuning(from: rawConfig)
-        return WifiChangeResult(applied: setting, previous: Self.revertable(previous), verified: verified, tuning: tuning, date: Date())
-    }
-
-    /// "Not set" can't be written back, so the revert target for an unset traffic control is "Off".
-    static func revertable(_ s: WifiSetting) -> WifiSetting {
-        if case .trafficControl(.unset) = s { return .trafficControl(.none) }
-        return s
+        return WifiChangeResult(applied: canonical, previous: previous, verified: verified, tuning: tuning, date: Date())
     }
 
     private func wifiTuningRaw() async throws -> WifiConfig {
-        try await wifiTuning()
-        return rawConfig
+        let response = try await send("wifi_get_config") { $0.wifiGetConfig = .init() }
+        let config = response.wifiGetConfig.wifiConfig
+        rawConfig = config
+        return config
     }
 
     public func rename(client: NetworkClient, to name: String) async throws {

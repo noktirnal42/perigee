@@ -66,6 +66,7 @@ public actor DishService {
 
     public func probeCapabilities() async -> [Capability] {
         _ = try? await status(); _ = try? await settings(); _ = try? await obstructionMap(); _ = try? await history()
+        _ = try? await send("get_location") { $0.getLocation = .init() }
         return KnownCapabilities.dish.map { var c = $0; c.state = capabilities.state(c.method); return c }
     }
 

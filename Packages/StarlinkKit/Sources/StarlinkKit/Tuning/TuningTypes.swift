@@ -59,24 +59,27 @@ public struct CakeParams: Sendable, Equatable, Codable {
         public var id: Int { rawValue }
         public var label: String { ["Off", "On", "Aggressive"][rawValue] }
     }
-    /// Shaping rate in Mbit/s (the proto field is a bare float; the router's own ack queue uses Mbit/s).
-    public var bandwidthMbps: Double
+    /// Raw device-protocol value. The exported schema does not specify units.
+    public var bandwidth: Double
+    public var hostMark: UInt32
     public var priority: Priority
     public var ackFilter: AckFilter
-    public var manualRttMs: Double
-    public init(bandwidthMbps: Double, priority: Priority = .diffserv3, ackFilter: AckFilter = .off, manualRttMs: Double = 0) {
-        self.bandwidthMbps = bandwidthMbps; self.priority = priority; self.ackFilter = ackFilter; self.manualRttMs = manualRttMs
+    public var manualRtt: Double
+    public init(bandwidth: Double, priority: Priority = .diffserv3, ackFilter: AckFilter = .off, manualRtt: Double = 0, hostMark: UInt32 = 0) {
+        self.bandwidth = bandwidth; self.priority = priority; self.ackFilter = ackFilter; self.manualRtt = manualRtt; self.hostMark = hostMark
     }
 }
 
 public struct AckSuppressionParams: Sendable, Equatable, Codable {
+    public var ackMark: UInt32
     public var htbAckQueueRate: Double
     public var htbAckQueueCeil: Double
     public var cakeQueueBandwidth: Double
     public var cakeAckFilterAggressive: Bool
     public var cakeManualRttMs: Double
     public init(htbAckQueueRate: Double = 0, htbAckQueueCeil: Double = 0, cakeQueueBandwidth: Double = 0,
-                cakeAckFilterAggressive: Bool = false, cakeManualRttMs: Double = 0) {
+                cakeAckFilterAggressive: Bool = false, cakeManualRttMs: Double = 0, ackMark: UInt32 = 0) {
+        self.ackMark = ackMark
         self.htbAckQueueRate = htbAckQueueRate; self.htbAckQueueCeil = htbAckQueueCeil
         self.cakeQueueBandwidth = cakeQueueBandwidth; self.cakeAckFilterAggressive = cakeAckFilterAggressive
         self.cakeManualRttMs = cakeManualRttMs
@@ -84,6 +87,9 @@ public struct AckSuppressionParams: Sendable, Equatable, Codable {
 }
 
 public enum TrafficControl: Sendable, Equatable, Codable {
+    public enum OpaqueKind: String, Sendable, Codable { case none, ackSuppression, cake }
+    /// An unfamiliar device value retained for exact restoration; nil means serialization failed.
+    case opaque(OpaqueKind, Data?)
     case unset
     case none
     case ackSuppression(AckSuppressionParams)
@@ -94,7 +100,8 @@ public enum TrafficControl: Sendable, Equatable, Codable {
         case .unset: "Not set"
         case .none: "Off"
         case .ackSuppression: "Ack suppression"
-        case .cake(let c): "CAKE · \(Int(c.bandwidthMbps)) Mbps"
+        case .cake(let c): "CAKE · bandwidth \(c.bandwidth.formatted()) (device units)"
+        case .opaque: "Unrecognized traffic-control parameters"
         }
     }
 }
@@ -165,9 +172,9 @@ public enum ChangeImpact: String, Sendable, Codable {
     public var warning: String? {
         switch self {
         case .none: nil
-        case .wifiRestart: "Applying this restarts the Wi-Fi radios. Every connected device drops for roughly 10–40 seconds, including this one."
-        case .wanShaping: "Changes how the router queues internet traffic. Connections may hiccup for a moment while the queue is rebuilt."
-        case .routing: "Changes how the router routes traffic. You can lose access to the router (and the app) until you revert or reset it."
+        case .wifiRestart: "Applying this may restart Wi-Fi and disconnect devices, including this one."
+        case .wanShaping: "This changes how the router queues internet traffic and may interrupt connections."
+        case .routing: "This changes how the router routes traffic. You may lose access to the router and the app."
         }
     }
 }

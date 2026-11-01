@@ -43,7 +43,7 @@ let package = Package(
                 .product(name: "GRPCProtobuf", package: "grpc-swift-protobuf"),
                 .product(name: "GRPCNIOTransportHTTP2", package: "grpc-swift-nio-transport"),
             ],
-            resources: [.copy("Resources/Fixtures")]
+            resources: [.copy("Resources/Fixtures"), .copy("Resources/Geo"), .copy("Resources/Orbits")]
         ),
         .executableTarget(name: "perigee-probe", dependencies: ["StarlinkKit"]),
         .testTarget(name: "StarlinkKitTests", dependencies: ["StarlinkKit"]),

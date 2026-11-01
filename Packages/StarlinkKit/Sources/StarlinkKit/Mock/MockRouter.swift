@@ -22,6 +22,8 @@ public final class MockRouterTransport: RouterTransport, @unchecked Sendable {
     private let deniedMethods: Set<String>
     private let latency: Duration
     private var failNextWrite: DeviceError?
+    private var configReadFailureAfterWrite: DeviceError?
+    private var shouldFailConfigReads = false
     private var clientNames: [UInt32: String] = [:]
 
     /// - Parameter denied: Swift method names answered with PermissionDenied, like the real LAN session does.
@@ -45,6 +47,7 @@ public final class MockRouterTransport: RouterTransport, @unchecked Sendable {
     var currentConfig: WifiConfig { lock.withLock { config } }
     public var writeCount: Int { lock.withLock { _patches.count + _renames.count } }
     public func failNextWrite(with e: DeviceError) { lock.withLock { failNextWrite = e } }
+    public func failConfigReadsAfterWrite(with e: DeviceError) { lock.withLock { configReadFailureAfterWrite = e } }
     func setConfig(_ c: WifiConfig) { lock.withLock { config = c } }
 
     // MARK: RouterTransport
@@ -86,6 +89,7 @@ public final class MockRouterTransport: RouterTransport, @unchecked Sendable {
             }
             return r
         case .wifiGetConfig:
+            if shouldFailConfigReads, let error = configReadFailureAfterWrite { throw error }
             var r = RouterResponse()
             r.wifiGetConfig.wifiConfig = config
             return r
@@ -106,6 +110,7 @@ public final class MockRouterTransport: RouterTransport, @unchecked Sendable {
             let patch = request.wifiSetConfig.wifiConfig
             _patches.append(patch)
             Self.apply(patch: patch, to: &config)
+            shouldFailConfigReads = true
             var r = RouterResponse()
             r.wifiSetConfig.updatedWifiConfig = config
             return r
