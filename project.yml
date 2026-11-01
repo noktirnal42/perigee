@@ -23,6 +23,7 @@ targets:
     platform: iOS
     sources:
       - path: App/Shared
+        excludes: ["Art/**"]   # source masters (icon), not shipped in the bundle
       - path: App/iOS
     dependencies:
       - package: StarlinkKit
@@ -50,6 +51,7 @@ targets:
     platform: macOS
     sources:
       - path: App/Shared
+        excludes: ["Art/**"]   # source masters (icon), not shipped in the bundle
       - path: App/macOS
     dependencies:
       - package: StarlinkKit
