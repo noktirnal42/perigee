@@ -115,6 +115,7 @@ Every v1 guarantee carries forward exactly as-is: read-only by default, single-f
 | 4 ⚠️ *(partially shipped)* | Multi-site/fleet shipped; CloudKit sync deferred (its own entitlement/container/conflict-resolution scope) | Needed before data model gets harder to migrate later |
 | 5 ⚠️ *(partially shipped)* | Forecast engine shipped; history-aware Advisor tip added to the existing recommendations list; guided Tuning Session wizard deferred (see below) | Builds directly on History + multi-site data |
 | 6 ⚠️ *(partially shipped)* | Liquid Glass correctness/consistency pass across the whole app shipped; globe v2, AR stretch, localization scaffolding and a deeper accessibility pass deferred (see below) | Polish pass once feature surface is settled |
+| 7 ⚠️ *(partially shipped)* | CloudKit sync (§4F) shipped for the site list only; saved stall-test history and exported plans deferred (see below) | Last deferred item from Phase 4; data model is now stable enough to sync |
 
 ---
 
@@ -214,9 +215,39 @@ tab styling, and a richer Mac menu-bar extra (mini sparkline, right-click quick 
 additional scope — new interaction design, new data wiring, or a new platform-specific layout — better
 taken as its own pass.
 
+## 7e. Phase 7 scope note
+
+Shipped: CloudKit sync for the saved site list only (name, router/dish address) — a new `StarlinkKit/Sync`
+module (`SyncEngine`, the `CloudSyncTransport` protocol, `MockCloudSyncTransport` for tests/demo) plus a real
+`CloudKitSyncTransport` in the app layer (the user's private CloudKit database, one custom zone), following the
+same protocol-based/mock-tested split as every other device-facing service. Strictly opt-in and off by default,
+toggled from a new Settings → Sync section with a manual "Sync now" and a status line. `Site` gained `updatedAt`
+(stamped by `SiteStore`, never the caller) and `SiteStore` gained delete tombstones, both backward-compatible
+with sites saved before this shipped. Merge is last-write-wins by `updatedAt`, decided against the device's own
+last-successful-sync time rather than a full snapshot cache; concurrent edits are resolved by comparing
+timestamps and the loser is silently overwritten next pass — an honestly-simple tradeoff, not a CRDT. Verified:
+all 88 StarlinkKit tests pass (4 new, covering first-enable push, pulling a remote site, a local edit beating a
+stale remote copy, and a remote deletion propagating), and the iOS target builds and runs clean on the
+Simulator with no regressions. The macOS target's code is unchanged in correctness — it hit the same compile
+errors as iOS and now compiles the same way — but could not be fully verified: the Mac build needs the new
+iCloud/CloudKit capability registered against the Apple Developer account's App ID, which `xcodebuild
+-allowProvisioningUpdates` could not do from the command line in this environment (unlike routine profile
+renewal, registering a *new* capability typically needs one interactive pass through Xcode's own Signing &
+Capabilities UI, or the developer portal directly) — a one-time step still pending before the Mac target will
+build or before real CloudKit sync between devices can be tried.
+
+Deliberately **not** built this pass: syncing saved stall-test history or "exported plans." Stall-test history
+is stored per-site in a separate directory tree (`SiteStore.directory(for:)`), scoped to whichever site is
+currently active — syncing it correctly means tagging every synced record with its owning site and reconciling
+per-site rather than just a flat list, real additional design and scope beyond the site list sync shipped here.
+"Exported plans" were never a stored entity to begin with (`ExportCard`'s report is generated fresh on demand),
+so there is nothing to sync there until/unless that changes. Also not built: any push-triggered realtime sync
+(`CKSubscription` + remote-notification background delivery) — sync runs on app foreground, after a site edit,
+and on a manual "Sync now" tap, not continuously in the background.
+
 ## 8. Open questions for you
 
-1. CloudKit sync — want it in scope for v2, or keep every device fully independent?
+1. ~~CloudKit sync — want it in scope for v2, or keep every device fully independent?~~ **Answered 2026-11-02: in scope, as Phase 7.**
 2. watchOS — worth building given the dish/router are LAN-bound (so the Watch would need the phone nearby anyway), or cut?
-3. AR sky view — keep as a stretch goal, or drop it now to focus the roadmap?
+3. ~~AR sky view — keep as a stretch goal, or drop it now to focus the roadmap?~~ **Answered 2026-11-02: keep as a stretch goal** (not scheduled into a phase; revisit after globe v2's tap/time-scrubber work).
 4. Does the phase order in §5 match your priorities, or would you rather pull Alerts (Phase 2) or Widgets/Shortcuts (Phase 3) ahead of the History engine's full build-out?

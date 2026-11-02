@@ -45,7 +45,7 @@ Perigee surfaces that API as a polished, safe, A/B-testable app.
 | **Trends** | On-device history beyond the device's own 15-minute buffer: uptime, ping and obstruction over 24h/7d/30d, with a timeline of every tuning change, dish change and saved stall test. Nothing leaves the device. |
 | **Alerts** | Local notifications when router/dish go offline, obstruction spikes, or ping/loss cross a threshold you set — sustained, debounced, no server. Plus a weekly recap of uptime and your best/worst hour. |
 | **Widgets & Shortcuts** | *(iOS)* Home/Lock Screen widgets show status, ping and obstruction from a shared on-device snapshot. Siri/Shortcuts can check status headlessly, or jump straight to the stall tester or Wi-Fi tuning — never acting on a setting without you. |
-| **Sites** | Save multiple Starlink installations — home, a second property, an RV/Roam dish, a boat — and switch between them. Each keeps its own history, alerts and saved tests. |
+| **Sites** | Save multiple Starlink installations — home, a second property, an RV/Roam dish, a boat — and switch between them. Each keeps its own history, alerts and saved tests. Optional, off-by-default iCloud sync keeps the site list itself (not history, alerts or saved tests) in step across your own devices — your private CloudKit database, never a Perigee-run server. |
 | **Forecast** | A Home-screen "possible rough window ahead" estimate, built from public orbital data (satellite density over your saved location) and this device's own history (hours of day that have historically run worse) — never something Starlink publishes, and clearly labeled as an estimate that can be wrong. Stays quiet without real data to back it. |
 | **Native everywhere** | iPhone, iPad and a real Mac app: sidebar, toolbar, keyboard shortcuts, menu-bar extra with live ping, Dynamic Type, VoiceOver, Reduce Motion, dark-first design. |
 
@@ -64,7 +64,7 @@ cd perigee
 open Perigee.xcodeproj
 ```
 
-1. Pick the **Perigee_macOS** or **Perigee_iOS** scheme and press **⌘R**. Both targets use an App Group (for the widget/Shortcuts data bridge) and need a real development team — set one under *Signing & Capabilities* with your own Apple ID if Xcode doesn't pick one automatically.
+1. Pick the **Perigee_macOS** or **Perigee_iOS** scheme and press **⌘R**. Both targets use an App Group (for the widget/Shortcuts data bridge) and an iCloud/CloudKit container (for the optional, off-by-default site sync) and need a real development team — set one under *Signing & Capabilities* with your own Apple ID if Xcode doesn't pick one automatically. The first build with your own team may need one pass through *Signing & Capabilities* in Xcode itself (not just `xcodebuild`) for Apple to register the iCloud container against your App ID — after that, the command line works as usual.
 2. For a physical iPhone/iPad, select your device and set a signing team under *Signing & Capabilities*, or from the command line:
    ```bash
    xcodebuild -project Perigee.xcodeproj -scheme Perigee_iOS -destination 'id=<DEVICE_UDID>' \

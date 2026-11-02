@@ -88,6 +88,7 @@ public final class StarlinkSession {
 
     public let siteStore: SiteStore
     public private(set) var currentSite: Site
+    public let sync: SyncEngine
 
     private var router: RouterService?
     private var dish: DishService?
@@ -105,12 +106,17 @@ public final class StarlinkSession {
     /// - Parameter results: Pass a specific store (e.g. for tests); otherwise one is scoped to the current site.
     /// - Parameter history: Pass a specific store (e.g. for tests); otherwise one is chosen based on `source` and site.
     /// - Parameter automation: Pass a specific engine (e.g. for tests); otherwise one is chosen based on `source` and site.
+    /// - Parameter syncTransport: `nil` in demo mode or when the caller doesn't supply one (e.g. most tests) —
+    ///   `SyncEngine.isEnabled` can still be flipped, but `sync()` is then a no-op. The app layer passes a real
+    ///   CloudKit-backed transport here; tests can pass `MockCloudSyncTransport()`.
     public init(source: DataSource = .live, siteStore: SiteStore? = nil, results: ResultsStore? = nil,
-                demoRefusesWrites: Bool = false, history: HistoryStore? = nil, automation: AutomationEngine? = nil) {
+                demoRefusesWrites: Bool = false, history: HistoryStore? = nil, automation: AutomationEngine? = nil,
+                syncTransport: CloudSyncTransport? = nil) {
         let sites = siteStore ?? SiteStore()
         self.siteStore = sites
         let site = sites.current
         self.currentSite = site
+        self.sync = SyncEngine(siteStore: sites, transport: syncTransport)
         self.injectedSource = source
         self.source = source
         self.demoRefusesWrites = demoRefusesWrites
@@ -196,6 +202,7 @@ public final class StarlinkSession {
 
     public func start() {
         guard pollTask == nil else { return }
+        if sync.isEnabled { Task { await self.sync.sync() } }
         pollTask = Task { [weak self] in
             while !Task.isCancelled {
                 guard let self else { return }

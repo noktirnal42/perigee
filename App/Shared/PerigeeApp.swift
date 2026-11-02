@@ -5,10 +5,13 @@ import StarlinkKit
 struct PerigeeApp: App {
     @State private var session = PerigeeApp.makeSession()
 
-    /// `-demo` launches against the built-in sample network (used for screenshots and previews).
+    /// `-demo` launches against the built-in sample network (used for screenshots and previews). Demo mode gets
+    /// no CloudKit transport — nothing demo-only should ever reach a real iCloud account.
     private static func makeSession() -> StarlinkSession {
-        StarlinkSession(source: CommandLine.arguments.contains("-demo") ? .demo : .live,
-                        demoRefusesWrites: CommandLine.arguments.contains("-refuse-writes"))
+        let demo = CommandLine.arguments.contains("-demo")
+        return StarlinkSession(source: demo ? .demo : .live,
+                        demoRefusesWrites: CommandLine.arguments.contains("-refuse-writes"),
+                        syncTransport: demo ? nil : CloudKitSyncTransport())
     }
 
     var body: some Scene {

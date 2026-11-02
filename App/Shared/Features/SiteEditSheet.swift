@@ -44,6 +44,7 @@ struct SiteEditSheet: View {
                     Section {
                         Button("Delete site", role: .destructive) {
                             session.siteStore.remove(editing.id)
+                            Task { await session.sync.sync() }
                             dismiss()
                         }
                         .disabled(editing.id == session.currentSite.id || session.siteStore.sites.count <= 1)
@@ -75,6 +76,7 @@ struct SiteEditSheet: View {
                         } else {
                             session.siteStore.add(Site(name: name.isEmpty ? "New site" : name, routerHost: routerHost, dishHost: dishHost))
                         }
+                        Task { await session.sync.sync() }
                         dismiss()
                     }.disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }

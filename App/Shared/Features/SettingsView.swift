@@ -32,6 +32,19 @@ struct SettingsView: View {
                     Button { siteSheet = .add } label: { Label("Add site", systemImage: "plus.circle") }
                         .buttonStyle(.bordered).tint(.white)
                 }
+                section("Sync") {
+                    ExplainedToggle(title: "Sync sites with iCloud", explanation: "Off by default. When on, your saved sites (name and router/dish address — not history, alerts or saved tests) sync between your own devices via your private iCloud account. Perigee never runs its own server.",
+                                     isOn: Binding(get: { session.sync.isEnabled }, set: { session.sync.isEnabled = $0 }))
+                    if session.sync.isEnabled {
+                        HStack {
+                            Text(syncStatusText).font(.footnote).foregroundStyle(.secondary)
+                            Spacer()
+                            Button("Sync now") { Task { await session.sync.sync() } }
+                                .buttonStyle(.bordered).tint(.white).controlSize(.small)
+                                .disabled(session.sync.status == .syncing)
+                        }
+                    }
+                }
                 section("Devices") {
                     field("Router address", text: $routerHost, hint: "192.168.1.1 · port 9000")
                     field("Dish address", text: $dishHost, hint: "192.168.100.1 · port 9200")
@@ -89,6 +102,15 @@ struct SettingsView: View {
             case .add: SiteEditSheet(editing: nil)
             case .edit(let site): SiteEditSheet(editing: site)
             }
+        }
+    }
+
+    private var syncStatusText: String {
+        switch session.sync.status {
+        case .idle: "Not synced yet"
+        case .syncing: "Syncing…"
+        case .succeeded(let date): "Last synced \(Fmt.time(date))"
+        case .failed(let message): message
         }
     }
 
