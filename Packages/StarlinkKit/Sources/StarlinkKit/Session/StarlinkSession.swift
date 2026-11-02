@@ -79,36 +79,49 @@ public final class StarlinkSession {
     public private(set) var dishWritesRefused = false
 
     public let gate = WriteGate()
-    public let results: ResultsStore
+    public private(set) var results: ResultsStore
     public private(set) var history: HistoryStore
     public private(set) var automation: AutomationEngine
     /// Alerts that just fired and haven't been shown yet. The app layer drains this (`consumePendingAlerts()`)
     /// to post system notifications; StarlinkKit itself never calls `UNUserNotificationCenter`.
     public private(set) var pendingAlerts: [TriggeredAlert] = []
 
+    public let siteStore: SiteStore
+    public private(set) var currentSite: Site
+
     private var router: RouterService?
     private var dish: DishService?
     private var pollTask: Task<Void, Never>?
     private var tickCount = 0
     private let injectedSource: DataSource?
+    private let injectedResults: ResultsStore?
     private let injectedHistory: HistoryStore?
     private let injectedAutomation: AutomationEngine?
     private let demoRefusesWrites: Bool
 
     /// - Parameter demoRefusesWrites: Demo mode only: behave like a router that answers every change with PermissionDenied
     ///   (what real Starlink routers do over the LAN), so that state can be previewed and tested.
-    /// - Parameter history: Pass a specific store (e.g. for tests); otherwise one is chosen based on `source`.
-    /// - Parameter automation: Pass a specific engine (e.g. for tests); otherwise one is chosen based on `source`.
-    public init(source: DataSource = .live, results: ResultsStore = ResultsStore(), demoRefusesWrites: Bool = false,
-                history: HistoryStore? = nil, automation: AutomationEngine? = nil) {
-        self.results = results
+    /// - Parameter siteStore: Pass a specific store (e.g. for tests); otherwise the saved sites are loaded/created.
+    /// - Parameter results: Pass a specific store (e.g. for tests); otherwise one is scoped to the current site.
+    /// - Parameter history: Pass a specific store (e.g. for tests); otherwise one is chosen based on `source` and site.
+    /// - Parameter automation: Pass a specific engine (e.g. for tests); otherwise one is chosen based on `source` and site.
+    public init(source: DataSource = .live, siteStore: SiteStore? = nil, results: ResultsStore? = nil,
+                demoRefusesWrites: Bool = false, history: HistoryStore? = nil, automation: AutomationEngine? = nil) {
+        let sites = siteStore ?? SiteStore()
+        self.siteStore = sites
+        let site = sites.current
+        self.currentSite = site
         self.injectedSource = source
         self.source = source
         self.demoRefusesWrites = demoRefusesWrites
+        self.routerHost = site.routerHost
+        self.dishHost = site.dishHost
+        self.injectedResults = results
+        self.results = results ?? ResultsStore(directory: sites.directory(for: site))
         self.injectedHistory = history
-        self.history = history ?? HistoryStore.makeDefault(for: source)
+        self.history = history ?? HistoryStore.makeDefault(for: source, siteDirectory: sites.directory(for: site))
         self.injectedAutomation = automation
-        self.automation = automation ?? AutomationEngine.makeDefault(for: source)
+        self.automation = automation ?? AutomationEngine.makeDefault(for: source, siteDirectory: sites.directory(for: site))
         build()
         if demoRefusesWrites && source == .demo { routerWritesRefused = true }
     }
@@ -139,11 +152,35 @@ public final class StarlinkSession {
         stop()
         source = s
         reset()
-        if injectedHistory == nil { history = HistoryStore.makeDefault(for: s) }
-        if injectedAutomation == nil { automation = AutomationEngine.makeDefault(for: s) }
+        let dir = siteStore.directory(for: currentSite)
+        if injectedResults == nil, s == .live { results = ResultsStore(directory: dir) }
+        if injectedHistory == nil { history = HistoryStore.makeDefault(for: s, siteDirectory: dir) }
+        if injectedAutomation == nil { automation = AutomationEngine.makeDefault(for: s, siteDirectory: dir) }
         build()
         start()
     }
+
+    /// Switches to a different saved site: reconnects to its router/dish addresses and swaps in its own
+    /// history, alerts and saved tests. No-op for demo data, and for the site that's already current.
+    public func switchSite(to siteId: UUID) {
+        guard source == .live, let site = siteStore.sites.first(where: { $0.id == siteId }), site.id != currentSite.id else { return }
+        stop()
+        siteStore.select(siteId)
+        currentSite = site
+        routerHost = site.routerHost
+        dishHost = site.dishHost
+        reset()
+        let dir = siteStore.directory(for: site)
+        if injectedResults == nil { results = ResultsStore(directory: dir) }
+        if injectedHistory == nil { history = HistoryStore.makeDefault(for: source, siteDirectory: dir) }
+        if injectedAutomation == nil { automation = AutomationEngine.makeDefault(for: source, siteDirectory: dir) }
+        build()
+        start()
+    }
+
+    /// Call after editing the current site's saved record (e.g. renaming it, or changing its addresses) so
+    /// `currentSite` reflects the update without a full `switchSite`.
+    public func refreshCurrentSiteFromStore() { currentSite = siteStore.current }
 
     public func reconnect() {
         stop(); reset(); build(); start()

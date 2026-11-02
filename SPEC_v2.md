@@ -112,7 +112,7 @@ Every v1 guarantee carries forward exactly as-is: read-only by default, single-f
 | 1 ✅ *(shipped)* | History engine + trend charts + timeline annotations | Everything else (alerts, forecast, weekly recap) needs data to act on |
 | 2 ✅ *(shipped)* | Alerts/automation + weekly recap | Highest user-visible "it told me before I noticed" value |
 | 3 ⚠️ *(partially shipped)* | Widgets + Shortcuts/App Intents shipped; Live Activity and watchOS deferred (see below) | High visibility, mostly additive UI work once History exists |
-| 4 | Multi-site/fleet + CloudKit sync | Needed before data model gets harder to migrate later |
+| 4 ⚠️ *(partially shipped)* | Multi-site/fleet shipped; CloudKit sync deferred (its own entitlement/container/conflict-resolution scope) | Needed before data model gets harder to migrate later |
 | 5 | Forecast engine + Tuning UX 2.0 guided flow | Builds directly on History + multi-site data |
 | 6 | Visual design v2 (Liquid Glass, globe v2, AR stretch), accessibility/localization hardening | Polish pass once feature surface is settled |
 
@@ -156,6 +156,19 @@ the right screen rather than acting themselves — consistent with the safety mo
 Deliberately **not** built this pass: a macOS widget (iOS only for now), Live Activity for an in-progress stall
 test, and a watchOS app. Live Activity and watchOS are real additional scope (new entitlements/targets and, for
 watchOS, a full new platform target) better taken as their own pass rather than folded into this one.
+
+## 7b. Phase 4 scope note
+
+Shipped: `Site`/`SiteStore` — multiple saved installations (home, a second property, an RV/Roam dish, a boat),
+each with its own router/dish address, history, alert rules and saved stall tests. The very first site a user
+had before this feature shipped keeps using the app's original, un-scoped storage location (`isLegacyDefault`)
+so nothing from Phases 1–3 is orphaned; every other site gets its own `Sites/<uuid>/` folder. Settings has a
+new Sites section to switch, add, edit and delete sites. Site switching only applies to live data — demo mode
+stays a single pseudo-site, unaffected.
+
+Deliberately **not** built this pass: CloudKit sync. That's a distinct, larger piece of work (CloudKit
+entitlement/container, `CKRecord` mapping for sites/presets/history, conflict resolution for multi-device
+edits) better taken as its own pass; noted in SPEC_v2.md for a future phase.
 
 ## 8. Open questions for you
 

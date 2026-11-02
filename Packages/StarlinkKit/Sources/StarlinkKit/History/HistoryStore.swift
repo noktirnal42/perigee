@@ -198,12 +198,13 @@ public actor HistoryStore {
 }
 
 extension HistoryStore {
-    /// Live data persists under Application Support; demo data gets its own throwaway directory per launch
-    /// so preview/test numbers never mix into (or overwrite) a real router's history.
-    public static func makeDefault(for source: DataSource) -> HistoryStore {
+    /// Live data persists under `siteDirectory` (or the app's default Application Support location when `nil`,
+    /// e.g. the legacy default site); demo data gets its own throwaway directory per launch so preview/test
+    /// numbers never mix into (or overwrite) a real router's history.
+    public static func makeDefault(for source: DataSource, siteDirectory: URL? = nil) -> HistoryStore {
         switch source {
         case .live:
-            return HistoryStore()
+            return HistoryStore(directory: siteDirectory)
         case .demo:
             let dir = FileManager.default.temporaryDirectory.appendingPathComponent("PerigeeDemoHistory-\(UUID().uuidString)", isDirectory: true)
             return HistoryStore(directory: dir)

@@ -99,12 +99,12 @@ public actor AutomationEngine {
 }
 
 extension AutomationEngine {
-    /// Live data persists under Application Support; demo data gets its own throwaway directory per launch,
-    /// matching `HistoryStore.makeDefault(for:)` so demo rule-firing never touches a real router's alert state.
-    public static func makeDefault(for source: DataSource) -> AutomationEngine {
+    /// Live data persists under `siteDirectory` (or the app's default location when `nil`); demo data gets its
+    /// own throwaway directory per launch, matching `HistoryStore.makeDefault(for:)`.
+    public static func makeDefault(for source: DataSource, siteDirectory: URL? = nil) -> AutomationEngine {
         switch source {
         case .live:
-            return AutomationEngine()
+            return AutomationEngine(directory: siteDirectory)
         case .demo:
             let dir = FileManager.default.temporaryDirectory.appendingPathComponent("PerigeeDemoAlerts-\(UUID().uuidString)", isDirectory: true)
             return AutomationEngine(directory: dir)

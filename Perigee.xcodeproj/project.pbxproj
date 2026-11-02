@@ -14,6 +14,7 @@
 		14E97367B01747D0CBE3DBFE /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FEEA74B49A2CA653F19C821 /* HomeView.swift */; };
 		15E3CDC80B707484CF1F5C38 /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DBDE0B0BBA7E85C7A33FE /* Biometrics.swift */; };
 		1B9B37A614D10FA3C4F887AE /* MenuBarStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981BD4B7896BFFB40A086CB0 /* MenuBarStatus.swift */; };
+		1CD2DA6122C33046F628DB10 /* SiteEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A38A53C8AA3C6456BDD15B3 /* SiteEditSheet.swift */; };
 		1E1DDB38065F898CF386232F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB30E922114F342D2411DC1 /* Theme.swift */; };
 		1F69C4C1B219013E4416A72A /* TrendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66257B2995451A4E4243BECA /* TrendsView.swift */; };
 		2400C55CF2F5C2A73D795E06 /* StarlinkKit in Frameworks */ = {isa = PBXBuildFile; productRef = 495EC9BEE76909DC57461249 /* StarlinkKit */; };
@@ -49,6 +50,7 @@
 		C6BA5476F2F1E3E1D6B8F971 /* Surfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483E163A51FA06417BB0AFF /* Surfaces.swift */; };
 		C8433C9C6955D91BB89FE937 /* SkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C46F2E43AAC89C7F21C67 /* SkyView.swift */; };
 		C98DFA5736B967D20CECC4D1 /* SkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C46F2E43AAC89C7F21C67 /* SkyView.swift */; };
+		CADE7242E4D997DB58A159B7 /* SiteEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A38A53C8AA3C6456BDD15B3 /* SiteEditSheet.swift */; };
 		CC4A69F7AF6706B4AB165E15 /* SkyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4EF8605F587907B76C1752 /* SkyModel.swift */; };
 		CDA649B8CE3983CD6B267101 /* AlertNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A24181BF626D9ECFA73E06 /* AlertNotifier.swift */; };
 		CECE76D7A383140BF63E3BDD /* PerigeeWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2F3AEB708C3BEB3077A7953E /* PerigeeWidgetsExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -93,6 +95,7 @@
 
 /* Begin PBXFileReference section */
 		197114BF1B5A7F5D4636950D /* SlideToConfirm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideToConfirm.swift; sourceTree = "<group>"; };
+		1A38A53C8AA3C6456BDD15B3 /* SiteEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiteEditSheet.swift; sourceTree = "<group>"; };
 		1E2A3C0E0171EFB4B0A2FA43 /* TuneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuneView.swift; sourceTree = "<group>"; };
 		1EBFD4BFEDD5CD89E378ADA8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		269CF98B47860BDADFC22B21 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -295,6 +298,7 @@
 				8141B778034F6ABBF2B2657E /* NetworkView.swift */,
 				86DAB61B9CE498E6DBDC56AC /* RootView.swift */,
 				1EBFD4BFEDD5CD89E378ADA8 /* SettingsView.swift */,
+				1A38A53C8AA3C6456BDD15B3 /* SiteEditSheet.swift */,
 				66257B2995451A4E4243BECA /* TrendsView.swift */,
 				1E2A3C0E0171EFB4B0A2FA43 /* TuneView.swift */,
 				D9C4B4131A0ABAFEB04F50D7 /* Sky */,
@@ -455,6 +459,7 @@
 				BA9E7F38CB175494EBB74D9F /* PerigeeIntents.swift in Sources */,
 				5458B7E2ACC47647044B279E /* RootView.swift in Sources */,
 				B2C92004278F3A5B9A3577CF /* SettingsView.swift in Sources */,
+				CADE7242E4D997DB58A159B7 /* SiteEditSheet.swift in Sources */,
 				082F94AFD2A24633F936FC2A /* SkyChartView.swift in Sources */,
 				CC4A69F7AF6706B4AB165E15 /* SkyModel.swift in Sources */,
 				C8433C9C6955D91BB89FE937 /* SkyView.swift in Sources */,
@@ -495,6 +500,7 @@
 				E1E5A05923AB005B595E86FA /* PerigeeIntents.swift in Sources */,
 				140E6DFADB701279BD28AD6A /* RootView.swift in Sources */,
 				E4E1F86F6FA196FA447EC02B /* SettingsView.swift in Sources */,
+				1CD2DA6122C33046F628DB10 /* SiteEditSheet.swift in Sources */,
 				2F860FB8BBE754013E3D1E79 /* SkyChartView.swift in Sources */,
 				98692C846142AEF87EE819B0 /* SkyModel.swift in Sources */,
 				C98DFA5736B967D20CECC4D1 /* SkyView.swift in Sources */,
