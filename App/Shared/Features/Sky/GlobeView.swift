@@ -29,7 +29,7 @@ struct GlobeView: View {
                 }
                 .onEnded { _ in dragStart = nil })
             .simultaneousGesture(MagnifyGesture().onChanged { g in let z = zoomStart ?? zoom; zoomStart = z; zoom = max(0.8, min(4, z * g.magnification)) }.onEnded { _ in zoomStart = nil })
-            Button { follow = true; zoom = 1.9; recenter() } label: { Label("Center on me", systemImage: "location.fill").font(.footnote.weight(.semibold)).padding(.horizontal, 12).padding(.vertical, 8).card(radius: 18) }
+            Button { follow = true; zoom = 1.9; recenter() } label: { Label("Center on me", systemImage: "location.fill").font(.footnote.weight(.semibold)).padding(.horizontal, 12).padding(.vertical, 8).card(radius: 18, interactive: true) }
                 .buttonStyle(.plain).padding(10).opacity(observer == nil ? 0 : 1)
         }
         .onAppear { recenter() }

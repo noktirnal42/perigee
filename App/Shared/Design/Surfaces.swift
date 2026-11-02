@@ -5,6 +5,10 @@ import StarlinkKit
 struct CardBackground: ViewModifier {
     var radius: CGFloat = Theme.radius
     var tint: Color? = nil
+    /// Set for a card that is itself the whole hit target of a tappable control (e.g. wraps a `Button`),
+    /// so the glass reacts to touch/pointer. Leave false on static display cards — `interactive()` installs
+    /// continuous gesture tracking that's pure cost with nothing to animate on an inert surface.
+    var interactive: Bool = false
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
     func body(content: Content) -> some View {
@@ -12,7 +16,8 @@ struct CardBackground: ViewModifier {
         if reduceTransparency {
             content.background(Theme.deep, in: shape).overlay(shape.strokeBorder(Theme.cardStroke))
         } else if #available(iOS 26.0, macOS 26.0, *) {
-            content.glassEffect(.regular.tint((tint ?? .black).opacity(0.28)), in: shape)
+            let glass = Glass.regular.tint((tint ?? .black).opacity(0.28))
+            content.glassEffect(interactive ? glass.interactive() : glass, in: shape)
         } else {
             content
                 .background(.ultraThinMaterial, in: shape)
@@ -31,7 +36,21 @@ extension View {
         self
         #endif
     }
-    func card(radius: CGFloat = Theme.radius, tint: Color? = nil) -> some View { modifier(CardBackground(radius: radius, tint: tint)) }
+    func card(radius: CGFloat = Theme.radius, tint: Color? = nil, interactive: Bool = false) -> some View {
+        modifier(CardBackground(radius: radius, tint: tint, interactive: interactive))
+    }
+
+    /// Gives every `.card()` in this subtree one shared glass sampling region, so neighbouring cards with
+    /// different tints render consistently against the backdrop instead of each opening its own (glass
+    /// cannot sample glass). `spacing: 0` deliberately opts out of merging — these are a screen's worth of
+    /// distinct cards, not a toolbar cluster meant to fuse into one shape.
+    @ViewBuilder func cardGroup() -> some View {
+        if #available(iOS 26.0, macOS 26.0, *) {
+            GlassEffectContainer(spacing: 0) { self }
+        } else {
+            self
+        }
+    }
 }
 
 /// Full-screen backdrop for content screens: void black with a faint ember horizon glow.

@@ -98,6 +98,7 @@ struct ChoiceSheet: View {
                         .padding(16).card()
                 }
             }.padding(16).frame(maxWidth: 700)
+            .cardGroup()
         }
         .background(ScreenBackground())
         .navigationTitle(spec.title)
@@ -176,6 +177,7 @@ struct CakeSheet: View {
                     ChangeConfirmation(current: current, proposed: proposed) { result = $0 }.padding(16).card()
                 }
             }.padding(16).frame(maxWidth: 700)
+            .cardGroup()
         }
         .background(ScreenBackground())
         .navigationTitle("Smart queue (CAKE)")
@@ -255,6 +257,7 @@ struct PresetSheet: View {
                 }
                 if let error { Text(error).font(.footnote).foregroundStyle(Theme.bad) }
             }.padding(16).frame(maxWidth: 700)
+            .cardGroup()
         }
         .background(ScreenBackground())
         .navigationTitle(preset.title)

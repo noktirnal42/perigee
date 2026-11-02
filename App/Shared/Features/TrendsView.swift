@@ -53,6 +53,7 @@ struct TrendsView: View {
                 }
                 timeline
             }.padding(.horizontal, 16).padding(.bottom, 24).frame(maxWidth: 900)
+            .cardGroup()
         }
         .background(ScreenBackground())
         .navigationTitle("Trends")

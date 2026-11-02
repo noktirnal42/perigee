@@ -47,6 +47,7 @@ struct TuneView: View {
                 }
             }
             .padding(.horizontal, 16).padding(.bottom, 24).frame(maxWidth: 900)
+            .cardGroup()
         }
         .background(ScreenBackground())
         .navigationTitle("Tune")
@@ -80,7 +81,7 @@ struct TuneView: View {
                                 let n = p.plan(from: t, shapingMbps: 100).count
                                 Text(n == 0 ? "Already applied" : "\(n) change\(n == 1 ? "" : "s")").font(.caption.weight(.semibold)).foregroundStyle(n == 0 ? Theme.good : Theme.ember)
                             }
-                            .padding(14).frame(width: 190, height: 170, alignment: .topLeading).card()
+                            .padding(14).frame(width: 190, height: 170, alignment: .topLeading).card(interactive: true)
                         }.buttonStyle(.plain).foregroundStyle(.white)
                     }
                 }

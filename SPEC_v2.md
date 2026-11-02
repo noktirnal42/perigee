@@ -114,7 +114,7 @@ Every v1 guarantee carries forward exactly as-is: read-only by default, single-f
 | 3 ⚠️ *(partially shipped)* | Widgets + Shortcuts/App Intents shipped; Live Activity and watchOS deferred (see below) | High visibility, mostly additive UI work once History exists |
 | 4 ⚠️ *(partially shipped)* | Multi-site/fleet shipped; CloudKit sync deferred (its own entitlement/container/conflict-resolution scope) | Needed before data model gets harder to migrate later |
 | 5 ⚠️ *(partially shipped)* | Forecast engine shipped; history-aware Advisor tip added to the existing recommendations list; guided Tuning Session wizard deferred (see below) | Builds directly on History + multi-site data |
-| 6 | Visual design v2 (Liquid Glass, globe v2, AR stretch), accessibility/localization hardening | Polish pass once feature surface is settled |
+| 6 ⚠️ *(partially shipped)* | Liquid Glass correctness/consistency pass across the whole app shipped; globe v2, AR stretch, localization scaffolding and a deeper accessibility pass deferred (see below) | Polish pass once feature surface is settled |
 
 ---
 
@@ -186,6 +186,33 @@ fewer than 4 buckets.
 Deliberately **not** built this pass: the guided "Tuning Session" wizard (baseline capture → change → compare
 → keep/revert with an inline before/after chart) described in §4H. Only the history-aware *tip* was added to
 the existing Tune recommendations list; the wizard is a separate, larger UI flow better taken as its own pass.
+
+## 7d. Phase 6 scope note
+
+Perigee's card surfaces (`CardBackground`/`.card()`) already rendered as real Liquid Glass on iOS 26 /
+macOS 26, with a Reduce-Transparency and pre-26-material fallback, from earlier work — this phase is a
+correctness and consistency pass on top of that baseline, not a first adoption.
+
+Shipped: every screen built from several stacked `.card()` surfaces (Home's dashboard, Network, Tune,
+Dish/Satellites, Diagnostics and its Compare/Speed-and-trace sub-screens, Trends, and the Tune change
+sheets — choice/CAKE/preset) now wraps its cards in one shared `GlassEffectContainer` (`.cardGroup()`
+in `Surfaces.swift`), so neighbouring cards with different tints sample the backdrop consistently
+instead of each opening its own region — glass cannot sample glass. `spacing: 0` deliberately opts out
+of merging: these are a screen's worth of distinct cards, not a toolbar cluster meant to fuse into one
+shape. Cards that are themselves a single tappable control (Home's network/gaming-check cards and
+Settings button, Tune's preset cards, the globe's "Center on me" control) now pass `interactive: true`
+so the glass itself reacts to touch/pointer; static multi-row list cards were left non-interactive on
+purpose, since `interactive()` installs continuous gesture tracking that's pure cost on an inert
+surface. The iOS tab bar now sets `tabBarMinimizeBehavior(.onScrollDown)`. Toolbars, sheets and the
+Mac sidebar take system glass for free on recompile and needed no code change.
+
+Deliberately **not** built this pass: satellite globe v2 (tap-for-info, time-scrubber, AR stretch
+goal), localization scaffolding, a deeper accessibility pass on the trend charts specifically
+(VoiceOver audio-graph/data-table fallback beyond the Dynamic Type and Reduce Transparency/Motion
+support already in place), a true iPad inspector-pane layout beyond the existing `.sidebarAdaptable`
+tab styling, and a richer Mac menu-bar extra (mini sparkline, right-click quick actions). Each is real
+additional scope — new interaction design, new data wiring, or a new platform-specific layout — better
+taken as its own pass.
 
 ## 8. Open questions for you
 

@@ -62,14 +62,26 @@ struct RootView: View {
                 }
         }
         #else
+        Group {
+            if #available(iOS 26.0, *) {
+                tabs.tabBarMinimizeBehavior(.onScrollDown)
+            } else {
+                tabs
+            }
+        }
+        #endif
+    }
+
+    #if os(iOS)
+    private var tabs: some View {
         TabView(selection: $selection) {
             ForEach(AppSection.allCases) { s in
                 Tab(s.title, systemImage: s.symbol, value: s) { NavigationStack { screen(s) } }
             }
         }
         .tabViewStyle(.sidebarAdaptable)
-        #endif
     }
+    #endif
 
     @ViewBuilder private func screen(_ s: AppSection) -> some View {
         switch s {

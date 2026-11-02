@@ -60,6 +60,7 @@ struct DiagnosticsView: View {
                 CapabilitiesCard()
                 ExportCard(results: saved)
             }.padding(.horizontal, 16).padding(.bottom, 24).frame(maxWidth: 900)
+            .cardGroup()
         }
         .background(ScreenBackground())
         .navigationTitle("Diagnostics")
@@ -210,6 +211,7 @@ struct CompareView: View {
                     if let s = r.settings?.summary { Text("\(r.label): \(s)").font(.footnote).foregroundStyle(.secondary) }
                 }
             }.padding(16).frame(maxWidth: 800)
+            .cardGroup()
         }
         .background(ScreenBackground()).navigationTitle("A/B comparison")
         #if os(iOS)
@@ -304,6 +306,7 @@ struct SpeedAndTraceView: View {
                     } else { Text("Traceroute is available on this router. Hop results appear after a test starts.").foregroundStyle(.secondary) }
                 }.padding(16).frame(maxWidth: .infinity, alignment: .leading).card()
             }.padding(16).frame(maxWidth: 700)
+            .cardGroup()
         }
         .background(ScreenBackground()).navigationTitle("Speed & trace")
         .task { speed = try? await session.speedtest() }

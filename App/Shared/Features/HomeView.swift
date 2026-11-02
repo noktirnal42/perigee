@@ -39,6 +39,7 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 16).padding(.bottom, 24)
                 .frame(maxWidth: 900)
+                .cardGroup()
             }
         }
         .ignoresSafeArea(edges: .top)
@@ -68,7 +69,7 @@ struct HomeView: View {
             Spacer()
             #if os(iOS)
             Button { showSettings = true } label: {
-                Image(systemName: "gearshape.fill").font(.headline).frame(width: 40, height: 40).card(radius: 20)
+                Image(systemName: "gearshape.fill").font(.headline).frame(width: 40, height: 40).card(radius: 20, interactive: true)
             }.buttonStyle(.plain).accessibilityLabel("Settings")
             #endif
         }
@@ -86,7 +87,7 @@ struct HomeView: View {
                 Spacer()
                 Image(systemName: "chevron.right").foregroundStyle(.tertiary)
             }
-            .padding(14).card().contentShape(Rectangle())
+            .padding(14).card(interactive: true).contentShape(Rectangle())
         }
         .buttonStyle(.plain).foregroundStyle(.white)
         .accessibilityLabel("\(session.ssid ?? "Network"), \(session.wirelessClients.count) devices")
@@ -164,7 +165,7 @@ struct HomeView: View {
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 }
-                .padding(16).frame(maxWidth: .infinity, alignment: .leading).card(tint: Theme.ember).contentShape(Rectangle())
+                .padding(16).frame(maxWidth: .infinity, alignment: .leading).card(tint: Theme.ember, interactive: true).contentShape(Rectangle())
             }
             .buttonStyle(.plain).foregroundStyle(.white)
         }

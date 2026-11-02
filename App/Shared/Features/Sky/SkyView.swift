@@ -173,6 +173,7 @@ struct DishHub: View {
                 if tab == .status { DishContent() } else { SkyView() }
             }
             .padding(.horizontal, 16).padding(.bottom, 24).frame(maxWidth: 900)
+            .cardGroup()
         }
         .background(ScreenBackground())
         .navigationTitle("Dish")
