@@ -46,6 +46,7 @@ Perigee surfaces that API as a polished, safe, A/B-testable app.
 | **Alerts** | Local notifications when router/dish go offline, obstruction spikes, or ping/loss cross a threshold you set — sustained, debounced, no server. Plus a weekly recap of uptime and your best/worst hour. |
 | **Widgets & Shortcuts** | *(iOS)* Home/Lock Screen widgets show status, ping and obstruction from a shared on-device snapshot. Siri/Shortcuts can check status headlessly, or jump straight to the stall tester or Wi-Fi tuning — never acting on a setting without you. |
 | **Sites** | Save multiple Starlink installations — home, a second property, an RV/Roam dish, a boat — and switch between them. Each keeps its own history, alerts and saved tests. |
+| **Forecast** | A Home-screen "possible rough window ahead" estimate, built from public orbital data (satellite density over your saved location) and this device's own history (hours of day that have historically run worse) — never something Starlink publishes, and clearly labeled as an estimate that can be wrong. Stays quiet without real data to back it. |
 | **Native everywhere** | iPhone, iPad and a real Mac app: sidebar, toolbar, keyboard shortcuts, menu-bar extra with live ping, Dynamic Type, VoiceOver, Reduce Motion, dark-first design. |
 
 <p align="center">

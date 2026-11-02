@@ -29,6 +29,7 @@ struct HomeView: View {
                     if case .offline(let why) = session.link { OfflineCard(reason: why) }
                     networkCard
                     alertsBanner
+                    ForecastCard()
                     tiles
                     gamingCheck
                     if let t = session.lastUpdated {

@@ -30,6 +30,7 @@
 		5EAF0B0F2400AE8AFD10B8AD /* NetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8141B778034F6ABBF2B2657E /* NetworkView.swift */; };
 		65E8A4BC62C95CA6AECA80DB /* DishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92C9FB9EBBEFEEE7482743E3 /* DishView.swift */; };
 		65FB16E7A437CE60D74D172A /* Surfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8483E163A51FA06417BB0AFF /* Surfaces.swift */; };
+		667A011ACB02FB8CBD96EBF9 /* ForecastCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62D70C6FC0853093B875CBDD /* ForecastCard.swift */; };
 		6BCAA096C0503F7A9F966DBF /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE898340AC1D8088F42612D /* Format.swift */; };
 		6DA06E23C42210665A538DD0 /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DBDE0B0BBA7E85C7A33FE /* Biometrics.swift */; };
 		6F17721A3B199A56AA8F794C /* AlertNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A24181BF626D9ECFA73E06 /* AlertNotifier.swift */; };
@@ -61,6 +62,7 @@
 		E1E5A05923AB005B595E86FA /* PerigeeIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EBED576EC355E3D83EFAF5 /* PerigeeIntents.swift */; };
 		E2435228D76A6566080691EE /* PerigeeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BE2ABDFA9DD1F4AD9ABDAD /* PerigeeApp.swift */; };
 		E4E1F86F6FA196FA447EC02B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBFD4BFEDD5CD89E378ADA8 /* SettingsView.swift */; };
+		E5DA043B7062E42E4BCAF1D2 /* ForecastCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62D70C6FC0853093B875CBDD /* ForecastCard.swift */; };
 		E901C43299140132A6EBF115 /* HeroScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BA58E9A0D101200318045B /* HeroScene.swift */; };
 		EA81FDAB2D4FA9A2E3544B0A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA3E37CD0AB0B4E9A0516245 /* Assets.xcassets */; };
 		ECE0EF227ACA4A38382AFA01 /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE898340AC1D8088F42612D /* Format.swift */; };
@@ -107,6 +109,7 @@
 		3FEEA74B49A2CA653F19C821 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		51ABEB5F525D699C4EF3A954 /* Perigee_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Perigee_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52BE2ABDFA9DD1F4AD9ABDAD /* PerigeeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerigeeApp.swift; sourceTree = "<group>"; };
+		62D70C6FC0853093B875CBDD /* ForecastCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastCard.swift; sourceTree = "<group>"; };
 		66257B2995451A4E4243BECA /* TrendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendsView.swift; sourceTree = "<group>"; };
 		6A9F9EDD8041AC5A71FE1141 /* PerigeeWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerigeeWidgetsBundle.swift; sourceTree = "<group>"; };
 		732E1480F60928A626AA3D46 /* StarlinkKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StarlinkKit; path = Packages/StarlinkKit; sourceTree = SOURCE_ROOT; };
@@ -293,6 +296,7 @@
 				F66726FFEAC47AF2C2BE9B8D /* ChangeSheets.swift */,
 				DFC93BEBA065738FDF5A636A /* DiagnosticsView.swift */,
 				92C9FB9EBBEFEEE7482743E3 /* DishView.swift */,
+				62D70C6FC0853093B875CBDD /* ForecastCard.swift */,
 				3FEEA74B49A2CA653F19C821 /* HomeView.swift */,
 				981BD4B7896BFFB40A086CB0 /* MenuBarStatus.swift */,
 				8141B778034F6ABBF2B2657E /* NetworkView.swift */,
@@ -449,6 +453,7 @@
 				9F806E1B6EB179AB185D6FC6 /* Charts.swift in Sources */,
 				9AADCC4ECE5145C45AD8C606 /* DiagnosticsView.swift in Sources */,
 				B296B9CB9B4F59A14AF5DD9A /* DishView.swift in Sources */,
+				E5DA043B7062E42E4BCAF1D2 /* ForecastCard.swift in Sources */,
 				ECE0EF227ACA4A38382AFA01 /* Format.swift in Sources */,
 				ADCB97C0C29148EDCF178F74 /* GlobeView.swift in Sources */,
 				E901C43299140132A6EBF115 /* HeroScene.swift in Sources */,
@@ -490,6 +495,7 @@
 				339C0D4AAB7D0FC742CE80D7 /* Charts.swift in Sources */,
 				3E00702E8EC6C41D48BFD357 /* DiagnosticsView.swift in Sources */,
 				65E8A4BC62C95CA6AECA80DB /* DishView.swift in Sources */,
+				667A011ACB02FB8CBD96EBF9 /* ForecastCard.swift in Sources */,
 				6BCAA096C0503F7A9F966DBF /* Format.swift in Sources */,
 				D71D8B81A7D3A0F940794CAA /* GlobeView.swift in Sources */,
 				732AC6D875E14FA61DE2B9F8 /* HeroScene.swift in Sources */,

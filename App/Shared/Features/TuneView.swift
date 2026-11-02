@@ -18,6 +18,7 @@ struct TuneView: View {
     @State private var showCake = false
     @State private var preset: TuningPreset?
     @State private var proposed: WifiSetting?
+    @State private var historyBuckets: [HistoryBucket] = []
 
     var body: some View {
         ScrollView {
@@ -57,6 +58,7 @@ struct TuneView: View {
         .sheet(item: Binding(get: { proposed.map { ProposedSetting(setting: $0) } }, set: { proposed = $0?.setting })) { p in
             NavigationStack { ChoiceSheet(spec: spec(for: p.setting)) }.presentationDetents([.large])
         }
+        .task { historyBuckets = await session.history.buckets(resolution: .hour, since: Date().addingTimeInterval(-7 * 86400)) }
     }
 
     struct ProposedSetting: Identifiable { let setting: WifiSetting; var id: String { setting.title + setting.displayValue } }
@@ -88,6 +90,7 @@ struct TuneView: View {
 
     @ViewBuilder private func recommendations(_ t: WifiTuning) -> some View {
         let recs = Advisor.channelAdvice(tuning: t, airtime5: session.routerStatus?.airtime5, radio5: session.radios.first { $0.band == .ghz5 })
+            + Advisor.historyAdvice(recentBuckets: historyBuckets, tuning: t)
         if !recs.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
                 SectionTitle("Recommended for gaming")

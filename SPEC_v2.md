@@ -113,7 +113,7 @@ Every v1 guarantee carries forward exactly as-is: read-only by default, single-f
 | 2 ✅ *(shipped)* | Alerts/automation + weekly recap | Highest user-visible "it told me before I noticed" value |
 | 3 ⚠️ *(partially shipped)* | Widgets + Shortcuts/App Intents shipped; Live Activity and watchOS deferred (see below) | High visibility, mostly additive UI work once History exists |
 | 4 ⚠️ *(partially shipped)* | Multi-site/fleet shipped; CloudKit sync deferred (its own entitlement/container/conflict-resolution scope) | Needed before data model gets harder to migrate later |
-| 5 | Forecast engine + Tuning UX 2.0 guided flow | Builds directly on History + multi-site data |
+| 5 ⚠️ *(partially shipped)* | Forecast engine shipped; history-aware Advisor tip added to the existing recommendations list; guided Tuning Session wizard deferred (see below) | Builds directly on History + multi-site data |
 | 6 | Visual design v2 (Liquid Glass, globe v2, AR stretch), accessibility/localization hardening | Polish pass once feature surface is settled |
 
 ---
@@ -169,6 +169,23 @@ stays a single pseudo-site, unaffected.
 Deliberately **not** built this pass: CloudKit sync. That's a distinct, larger piece of work (CloudKit
 entitlement/container, `CKRecord` mapping for sites/presets/history, conflict resolution for multi-device
 edits) better taken as its own pass; noted in SPEC_v2.md for a future phase.
+
+## 7c. Phase 5 scope note
+
+Shipped: a `StarlinkKit/Forecast` module (`RiskWindow`, `Forecast.windows(...)`) combining two independent
+signals into a Home-screen "possible rough window ahead" card — (1) a satellite-density dip over the next 3
+hours from the existing SGP4 constellation engine + saved observer location (the same `Observer` the Sky tab
+already persists), and (2) hours of day that this device's own on-device history (`HistoryBucket`s, Phase 1)
+has consistently run worse than its own average. Both signals require real data to say anything — no observer
+location yet, or fewer than 24 hourly history buckets, and the card simply stays hidden rather than guessing.
+Also shipped: `Advisor.historyAdvice(recentBuckets:tuning:)`, a second history-aware tip on the Tune screen
+that compares the last ~3.5 days of hourly history against the previous ~3.5 days and flags a real upward
+trend in obstruction or 5GHz frame errors — distinct from the existing live-snapshot advice, and silent with
+fewer than 4 buckets.
+
+Deliberately **not** built this pass: the guided "Tuning Session" wizard (baseline capture → change → compare
+→ keep/revert with an inline before/after chart) described in §4H. Only the history-aware *tip* was added to
+the existing Tune recommendations list; the wizard is a separate, larger UI flow better taken as its own pass.
 
 ## 8. Open questions for you
 

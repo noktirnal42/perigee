@@ -130,6 +130,38 @@ public enum Advisor {
         }
         return out
     }
+
+    /// Looks for trends across recent on-device history that a single live reading can't show — the same
+    /// honesty standard as the rest of this app: every tip here is a pattern this device actually observed,
+    /// nothing inferred from outside data. Needs at least a handful of buckets to say anything.
+    public static func historyAdvice(recentBuckets: [HistoryBucket], tuning: WifiTuning?) -> [Recommendation] {
+        guard recentBuckets.count >= 4 else { return [] }
+        let sorted = recentBuckets.sorted { $0.start < $1.start }
+        let mid = sorted.count / 2
+        let earlier = sorted[..<mid], later = sorted[mid...]
+
+        func weightedAvg(_ slice: ArraySlice<HistoryBucket>, _ pick: (HistoryBucket) -> Double?) -> Double? {
+            var sum = 0.0, weight = 0
+            for b in slice { if let v = pick(b) { sum += v * Double(b.sampleCount); weight += b.sampleCount } }
+            return weight > 0 ? sum / Double(weight) : nil
+        }
+
+        var out: [Recommendation] = []
+        if let e = weightedAvg(earlier, { $0.avgObstruction }), let l = weightedAvg(later, { $0.avgObstruction }), e > 0, l > e * 1.5 {
+            out.append(.init(severity: .warning, title: "Obstruction has been rising",
+                             detail: String(format: "Your dish's average obstruction has trended up recently, from about %.2f%% to %.2f%%. Worth checking for anything new blocking its view.", e * 100, l * 100),
+                             suggestion: nil))
+        }
+        if let e = weightedAvg(earlier, { $0.avgFrameErrorRate5 }), let l = weightedAvg(later, { $0.avgFrameErrorRate5 }),
+           l > 0.01, l > e * 1.5, let tuning {
+            let ch = tuning.channel5
+            let alt = ch >= 149 || ch == 0 ? 36 : 149
+            out.append(.init(severity: .warning, title: "5 GHz frame errors have been climbing",
+                             detail: "Over your recent history, not just right now — pinning channel \(alt) is worth trying if this is interference rather than distance.",
+                             suggestion: .channel(.ghz5, alt)))
+        }
+        return out
+    }
 }
 
 public struct Recommendation: Sendable, Equatable, Identifiable {
